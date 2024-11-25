@@ -1,0 +1,89 @@
+/* Custom styles */
+:root {
+    --bg-primary: #1c1c24;
+    --bg-secondary: #2c2c34;
+    --accent-color: #ec4899;
+}
+
+body {
+    background-color: var(--bg-primary);
+    min-height: 100vh;
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bg-secondary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color);
+}
+
+/* Animation */
+.task {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.column {
+    transition: background-color 0.3s ease;
+}
+
+.column.dragging {
+    opacity: 0.5;
+    background-color: var(--bg-secondary);
+}
+
+.task.dragging {
+    opacity: 0.5;
+    background-color: var(--bg-secondary);
+}
+
+/* Sortable ghost */
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: var(--bg-secondary);
+}
+
+/* Button hover effects */
+button {
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* Column header */
+.column-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Task content */
+.task-title {
+    word-break: break-word;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .column {
+        width: 100%;
+        min-width: 100%;
+    }
+}

@@ -1,0 +1,177 @@
+/* Mobile-First Responsive Styles */
+
+/* Base Mobile Styles */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    main {
+        padding-top: 5rem !important;
+    }
+
+    h1 {
+        font-size: 1.5rem !important;
+    }
+
+    h2 {
+        font-size: 1.25rem !important;
+    }
+
+    .card, .theme-card {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+}
+
+/* Header & Navigation */
+@media (max-width: 768px) {
+    header {
+        height: auto !important;
+    }
+
+    .nav-link {
+        padding: 0.5rem !important;
+    }
+
+    .nav-link i {
+        font-size: 1.25rem !important;
+    }
+
+    .nav-text {
+        font-size: 0.875rem !important;
+    }
+
+    .active-status {
+        display: none !important;
+    }
+}
+
+/* Grid & Layout */
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    .flex-wrap {
+        flex-wrap: wrap !important;
+    }
+
+    .space-x-4 > * + * {
+        margin-left: 0.5rem !important;
+    }
+
+    .space-y-4 > * + * {
+        margin-top: 0.5rem !important;
+    }
+}
+
+/* Buttons & Interactive Elements */
+@media (max-width: 768px) {
+    button, .button {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.875rem !important;
+    }
+
+    input, select, textarea {
+        font-size: 16px !important; /* Prevents iOS zoom */
+        padding: 0.5rem !important;
+    }
+
+    .mood-button {
+        padding: 0.5rem 1rem !important;
+    }
+
+    .join-button {
+        padding: 0.75rem 1.5rem !important;
+        font-size: 1rem !important;
+    }
+
+    .join-button i {
+        font-size: 1.25rem !important;
+    }
+}
+
+/* Cards & Content */
+@media (max-width: 768px) {
+    .resource-card {
+        padding: 1rem !important;
+    }
+
+    .exercise-card {
+        padding: 1rem !important;
+    }
+
+    .chat-message {
+        padding: 0.75rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .profile-section {
+        padding: 1rem !important;
+    }
+}
+
+/* Specific Features */
+@media (max-width: 768px) {
+    .mood-history {
+        gap: 0.5rem !important;
+    }
+
+    .category-tab {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.875rem !important;
+    }
+
+    .exercise-progress {
+        padding: 0.75rem !important;
+    }
+
+    .wearable-card {
+        padding: 1rem !important;
+    }
+}
+
+/* Animations & Transitions */
+@media (max-width: 768px) {
+    .header-animate {
+        animation: none !important;
+    }
+
+    .fade-in {
+        animation-duration: 0.3s !important;
+    }
+}
+
+/* Utilities */
+@media (max-width: 768px) {
+    .mobile-hidden {
+        display: none !important;
+    }
+
+    .mobile-only {
+        display: block !important;
+    }
+
+    .mobile-stack {
+        flex-direction: column !important;
+    }
+
+    .mobile-center {
+        text-align: center !important;
+        justify-content: center !important;
+    }
+
+    .mobile-full {
+        width: 100% !important;
+    }
+}
+
+/* Dark Mode Adjustments */
+@media (max-width: 768px) {
+    .theme-card {
+        border-radius: 0.75rem !important;
+    }
+}

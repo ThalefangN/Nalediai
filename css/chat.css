@@ -1,0 +1,114 @@
+.message-container {
+    padding: 1rem;
+    overflow-y: auto;
+    height: calc(100vh - 160px);
+}
+
+.message {
+    display: flex;
+    margin-bottom: 1rem;
+    opacity: 1;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.message.user {
+    justify-content: flex-end;
+}
+
+.message-content {
+    max-width: 80%;
+    padding: 1rem;
+    border-radius: 1rem;
+    word-wrap: break-word;
+}
+
+.user .message-content {
+    background-color: #22c55e;
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 0.25rem;
+}
+
+.ai .message-content {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    margin-right: auto;
+    border-bottom-left-radius: 0.25rem;
+}
+
+.input-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    background-color: var(--bg-primary);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.input-wrapper {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 768px;
+    margin: 0 auto;
+}
+
+textarea {
+    flex-grow: 1;
+    padding: 0.75rem;
+    border-radius: 1.5rem;
+    resize: none;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    min-height: 45px;
+    max-height: 200px;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #22c55e;
+}
+
+#send-button {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #22c55e;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#send-button:hover {
+    background-color: #16a34a;
+}
+
+.typing-indicator {
+    padding: 1rem;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 0.3rem;
+    padding: 0.5rem;
+}
+
+.typing-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--text-secondary);
+    animation: typing 1.4s infinite;
+}
+
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
