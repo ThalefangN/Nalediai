@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crisis Resources - NalediAI</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        :root {
+            --bg-primary: #13131a;
+            --bg-secondary: #1c1c24;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+        }
+
+        .light-mode {
+            --bg-primary: #f7fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .theme-card {
+            background-color: var(--bg-secondary);
+        }
+
+        .resource-card {
+            background-color: var(--bg-secondary);
+            transition: transform 0.3s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            width: 50px;
+            height: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #4a5568;
+            transition: 0.4s;
+            border-radius: 25px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 19px;
+            width: 19px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #22c55e;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(25px);
+        }
+
+        .toggle-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .sun-icon {
+            right: 7px;
+        }
+
+        .moon-icon {
+            left: 7px;
+        }
+
+        @keyframes slide-up {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .animate-slide-up {
+            animation: slide-up 0.5s ease forwards;
+        }
+
+        /* Active Status Dot Animation */
+        .active-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .active-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+            }
+        }
+
+        .active-dot::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #22c55e;
+            opacity: 0.7;
+            animation: pulse 2s infinite;
+        }
+
+        .active-dot::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #22c55e;
+            opacity: 0.3;
+            animation: pulse 2s infinite;
+            animation-delay: 0.5s;
+        }
+
+        /* Grid Button Styles */
+        .grid-buttons {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.4rem;
+            padding: 0.4rem;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0.5rem auto;
+            margin-top: 4rem;
+        }
+
+        .grid-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .grid-button i {
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+            color: #22c55e;
+        }
+
+        .grid-button span {
+            font-weight: 500;
+            font-size: 0.7rem;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .grid-buttons {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.3rem;
+                padding: 0.3rem;
+                margin: 0.25rem auto;
+                margin-top: 3.5rem;
+            }
+            
+            .grid-button {
+                padding: 0.35rem;
+                min-height: 3.5rem;
+            }
+            
+            .grid-button i {
+                font-size: 0.85rem;
+                margin-bottom: 0.15rem;
+            }
+            
+            .grid-button span {
+                font-size: 0.6rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
+                padding: 0 0.1rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .grid-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen">
+        <!-- Header with Theme Toggle and Profile -->
+        <header class="fixed w-full top-0 z-50 theme-card shadow-lg header-animate">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between h-16">
+                    <!-- Logo -->
+                    <div class="flex items-center">
+                        <h1 class="text-2xl font-bold">NalediAI</h1>
+                    </div>
+
+                    <!-- Right Side Controls -->
+                    <div class="flex items-center space-x-6">
+                        <!-- Active Status Dot -->
+                        <div class="active-status">
+                            <div class="active-dot"></div>
+                            <span class="text-sm text-gray-400">Active</span>
+                        </div>
+
+                        <!-- Theme Toggle -->
+                        <div class="flex items-center">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="themeToggle">
+                                <span class="toggle-slider">
+                                    <i class="ti ti-sun toggle-icon sun-icon"></i>
+                                    <i class="ti ti-moon toggle-icon moon-icon"></i>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Profile/Logout Button -->
+                        <div class="relative">
+                            <button id="profileBtn" class="profile-btn flex items-center space-x-2 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-all duration-300">
+                                <i class="ti ti-user"></i>
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Buttons -->
+        <div class="mt-12"> 
+            <div class="grid-buttons">
+                <a href="chat.html" class="grid-button">
+                    <i class="ti ti-messages"></i>
+                    <span>Chat</span>
+                </a>
+                <a href="incognito-chat.html" class="grid-button">
+                    <i class="ti ti-message-off"></i>
+                    <span>Incognito Chat</span>
+                </a>
+                <a href="wearables.html" class="grid-button">
+                    <i class="ti ti-device-watch"></i>
+                    <span>Wearables</span>
+                </a>
+                <a href="exercises.html" class="grid-button">
+                    <i class="ti ti-activity"></i>
+                    <span>Exercises</span>
+                </a>
+                <a href="crisis-resources.html" class="grid-button">
+                    <i class="ti ti-emergency-bed"></i>
+                    <span>Crisis Resources</span>
+                </a>
+                <a href="#" class="grid-button">
+                    <i class="ti ti-books"></i>
+                    <span>Resources</span>
+                </a>
+            </div>
+        </div>
+
+        
+        <!-- Main Content -->
+        <div class="container mx-auto px-4 py-8">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold mb-4">Crisis Resources</h1>
+                <p class="text-xl text-gray-400">Immediate support when you need it most</p>
+            </div>
+
+            <!-- Emergency Contact Section -->
+            <div class="mb-12 p-6 bg-red-900/20 rounded-lg border border-red-500/30">
+                <h2 class="text-2xl font-bold mb-4 text-red-400">Emergency Contacts</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="flex items-center space-x-4">
+                        <i class="ti ti-phone-call text-4xl text-red-400"></i>
+                        <div>
+                            <h3 class="font-bold">Emergency Services</h3>
+                            <p class="text-2xl font-bold text-red-400">997</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <i class="ti ti-phone text-4xl text-red-400"></i>
+                        <div>
+                            <h3 class="font-bold">Crisis Hotline</h3>
+                            <p class="text-2xl font-bold text-red-400">3911270</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resource Categories -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Mental Health Centers -->
+                <div class="resource-card rounded-lg p-6 shadow-lg">
+                    <i class="ti ti-building-hospital text-4xl text-green-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Mental Health Centers</h3>
+                    <ul class="space-y-2">
+                        <li>Sbrana Psychiatric Hospital</li>
+                        <li>Jubilee Psychiatric Unit</li>
+                        <li>Tati River Clinic</li>
+                    </ul>
+                </div>
+
+                <!-- Support Groups -->
+                <div class="resource-card rounded-lg p-6 shadow-lg">
+                    <i class="ti ti-users text-4xl text-green-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Support Groups</h3>
+                    <ul class="space-y-2">
+                        <li>Botswana Network for Mental Health</li>
+                        <li>Youth Mental Health Support</li>
+                        <li>Family Support Network</li>
+                    </ul>
+                </div>
+
+                <!-- Online Resources -->
+                <div class="resource-card rounded-lg p-6 shadow-lg">
+                    <i class="ti ti-world text-4xl text-green-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Online Resources</h3>
+                    <ul class="space-y-2">
+                        <li>Mental Health Botswana Portal</li>
+                        <li>Self-Help Resources</li>
+                        <li>Crisis Prevention Guide</li>
+                    </ul>
+                </div>
+
+                <!-- Counseling Services -->
+                <div class="resource-card rounded-lg p-6 shadow-lg">
+                    <i class="ti ti-heart-handshake text-4xl text-green-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Counseling Services</h3>
+                    <ul class="space-y-2">
+                        <li>University Counseling Centers</li>
+                        <li>Community Counseling Services</li>
+                        <li>Youth Counseling Programs</li>
+                    </ul>
+                </div>
+
+                <!-- Prevention Resources -->
+                <div class="resource-card rounded-lg p-6 shadow-lg">
+                    <i class="ti ti-shield-check text-4xl text-green-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Prevention Resources</h3>
+                    <ul class="space-y-2">
+                        <li>Suicide Prevention Guide</li>
+                        <li>Crisis Planning Tools</li>
+                        <li>Safety Plan Template</li>
+                    </ul>
+                </div>
+
+                <!-- Family Support -->
+                <div class="resource-card rounded-lg p-6 shadow-lg">
+                    <i class="ti ti-home-heart text-4xl text-green-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Family Support</h3>
+                    <ul class="space-y-2">
+                        <li>Family Education Programs</li>
+                        <li>Parent Support Groups</li>
+                        <li>Caregiver Resources</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="mt-12 p-6 bg-green-900/20 rounded-lg border border-green-500/30">
+                <h2 class="text-2xl font-bold mb-4">Important Information</h2>
+                <ul class="space-y-4">
+                    <li class="flex items-start space-x-2">
+                        <i class="ti ti-info-circle text-green-500 mt-1"></i>
+                        <span>These resources are available 24/7 for anyone experiencing a mental health crisis.</span>
+                    </li>
+                    <li class="flex items-start space-x-2">
+                        <i class="ti ti-info-circle text-green-500 mt-1"></i>
+                        <span>If you're having thoughts of suicide or experiencing a mental health crisis, please reach out immediately.</span>
+                    </li>
+                    <li class="flex items-start space-x-2">
+                        <i class="ti ti-info-circle text-green-500 mt-1"></i>
+                        <span>All calls are confidential and handled by trained professionals.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            body.classList.add('light-mode');
+            themeToggle.checked = true;
+        }
+
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                body.classList.add('light-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>
+</body>
+</html>

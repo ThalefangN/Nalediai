@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incognito Chat - NalediAI Mental Health</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        :root {
+            --bg-primary: #13131a;
+            --bg-secondary: #1c1c24;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+        }
+
+        .light-mode {
+            --bg-primary: #f7fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .theme-card {
+            background-color: var(--bg-secondary);
+        }
+
+        /* Navigation Styles */
+        .nav-link {
+            color: var(--text-primary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #22c55e;
+            background-color: rgba(34, 197, 94, 0.1);
+        }
+
+        .nav-link i {
+            margin-right: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            width: 50px;
+            height: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #4a5568;
+            transition: 0.4s;
+            border-radius: 25px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 19px;
+            width: 19px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #22c55e;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(25px);
+        }
+
+        .toggle-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .sun-icon {
+            right: 7px;
+        }
+
+        .moon-icon {
+            left: 7px;
+        }
+
+        /* Chat Styles */
+        .chat-container {
+            height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            max-width: 80%;
+        }
+
+        .message.user {
+            margin-left: auto;
+            background-color: #22c55e;
+            color: white;
+        }
+
+        .message.bot {
+            margin-right: auto;
+            background-color: var(--bg-secondary);
+        }
+
+        .chat-input {
+            background-color: var(--bg-secondary);
+            border-color: rgba(156, 163, 175, 0.2);
+        }
+
+        .chat-input:focus {
+            border-color: #22c55e;
+            ring-color: #22c55e;
+        }
+
+        /* Incognito Mode Banner */
+        .incognito-banner {
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            border-left: 4px solid #22c55e;
+        }
+
+        /* Active Status Dot Animation */
+        .active-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .active-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+            }
+        }
+
+        .active-dot::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #22c55e;
+            opacity: 0.7;
+            animation: pulse 2s infinite;
+        }
+
+        .active-dot::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #22c55e;
+            opacity: 0.3;
+            animation: pulse 2s infinite;
+            animation-delay: 0.5s;
+        }
+
+        /* Exit Button Style */
+        .exit-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .exit-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .exit-button i {
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-buttons {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.3rem;
+                padding: 0.3rem;
+                margin: 0.25rem auto;
+                margin-top: 3.5rem;
+            }
+            
+            .grid-button {
+                padding: 0.35rem;
+                min-height: 3.5rem;
+            }
+            
+            .grid-button i {
+                font-size: 0.85rem;
+                margin-bottom: 0.15rem;
+            }
+            
+            .grid-button span {
+                font-size: 0.6rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
+                padding: 0 0.1rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .grid-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Theme Toggle and Profile -->
+    <header class="fixed w-full top-0 z-50 theme-card shadow-lg header-animate">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold">NalediAI</h1>
+                </div>
+
+                <!-- Right Side Controls -->
+                <div class="flex items-center space-x-6">
+                    <!-- Active Status Dot -->
+                    <div class="active-status">
+                        <div class="active-dot"></div>
+                        <span class="text-sm text-gray-400">Active</span>
+                    </div>
+
+                    <!-- Theme Toggle -->
+                    <div class="flex items-center">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="themeToggle">
+                            <span class="toggle-slider">
+                                <i class="ti ti-sun toggle-icon sun-icon"></i>
+                                <i class="ti ti-moon toggle-icon moon-icon"></i>
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Profile/Logout Button -->
+                    <div class="relative">
+                        <button id="profileBtn" class="profile-btn flex items-center space-x-2 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-all duration-300">
+                            <i class="ti ti-user"></i>
+                            <span>Logout</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 pt-24">
+        <!-- Incognito Mode Banner -->
+        <div class="incognito-banner p-4 rounded-lg mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="ti ti-incognito text-2xl text-green-500"></i>
+                    <div>
+                        <h2 class="text-lg font-semibold">Incognito Mode Active</h2>
+                        <p class="text-sm text-gray-400">Your chat history will not be saved</p>
+                    </div>
+                </div>
+                <a href="chat.html" class="exit-button">
+                    <i class="ti ti-door-exit"></i>
+                    <span>Exit Incognito</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Chat Interface -->
+        <div class="theme-card rounded-xl p-4">
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will be added here -->
+                    <div class="message bot rounded-lg p-3">
+                        Hello! I'm your anonymous NalediAI companion. Feel free to share anything - this conversation is private and won't be saved.
+                    </div>
+                </div>
+                <div class="mt-4 flex gap-2">
+                    <input type="text" id="messageInput" 
+                        class="chat-input flex-1 rounded-lg px-4 py-2 text-base focus:outline-none focus:ring-2"
+                        placeholder="Type your message...">
+                    <button id="sendMessage" 
+                        class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors duration-300">
+                        <i class="ti ti-send"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            body.classList.add('light-mode');
+            themeToggle.checked = true;
+        }
+
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                body.classList.add('light-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Chat Functionality
+        const messageInput = document.getElementById('messageInput');
+        const sendMessage = document.getElementById('sendMessage');
+        const chatMessages = document.getElementById('chatMessages');
+
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'} rounded-lg p-3`;
+            messageDiv.textContent = message;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        sendMessage.addEventListener('click', () => {
+            const message = messageInput.value.trim();
+            if (message) {
+                addMessage(message, true);
+                messageInput.value = '';
+                // Simulate bot response
+                setTimeout(() => {
+                    addMessage("I understand how you're feeling. Would you like to talk more about it?");
+                }, 1000);
+            }
+        });
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage.click();
+            }
+        });
+
+        // Profile/Logout Button
+        document.getElementById('profileBtn').addEventListener('click', () => {
+            localStorage.removeItem('userData');
+            localStorage.removeItem('sessionActive');
+            sessionStorage.removeItem('sessionActive');
+            window.location.href = 'signin.html';
+        });
+
+        // Check if user is logged in
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('sessionActive') || sessionStorage.getItem('sessionActive');
+            if (!isLoggedIn) {
+                window.location.href = 'signin.html';
+            }
+        }
+
+        // Run auth check when page loads
+        checkAuth();
+    </script>
+</body>
+</html>

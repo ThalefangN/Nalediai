@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - NalediAI Mental Health</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        :root {
+            --bg-primary: #13131a;
+            --bg-secondary: #1c1c24;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+        }
+
+        .light-mode {
+            --bg-primary: #f7fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .theme-card {
+            background-color: var(--bg-secondary);
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            width: 50px;
+            height: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #4a5568;
+            transition: 0.4s;
+            border-radius: 25px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 19px;
+            width: 19px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #22c55e;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(25px);
+        }
+
+        .toggle-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .sun-icon {
+            right: 7px;
+        }
+
+        .moon-icon {
+            left: 7px;
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slide-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.6s ease-out forwards;
+        }
+
+        .animate-slide-up {
+            opacity: 0;
+            animation: slide-up 0.6s ease-out forwards;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .error-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ef4444;
+            display: none;
+        }
+
+        .error-message {
+            font-size: 0.875rem;
+            color: #ef4444;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .error-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .input-error {
+            animation: shake 0.5s ease-in-out;
+            border-color: #ef4444 !important;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: #9ca3af;
+        }
+
+        .success-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            background: rgba(22, 163, 74, 0.95);
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .success-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="bg-[#13131a]">
+    <div class="flex min-h-screen items-center justify-center">
+        <div class="w-full max-w-md rounded-xl bg-[#1c1c24] p-8 shadow-lg">
+            <div class="text-center mb-8 animate-fade-in">
+                <h1 class="text-3xl font-bold text-white">Welcome Back!</h1>
+                <p class="text-gray-400 mt-2">Sign in to continue your journey, </p>
+            </div>
+
+            <form id="signinForm" class="space-y-6">
+                <div class="input-group animate-slide-up" style="animation-delay: 100ms">
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
+                    <div class="relative">
+                        <input type="email" id="email" name="email" required placeholder="Enter your email"
+                            class="w-full rounded-lg border border-gray-700 bg-white p-2.5 text-black placeholder-gray-500 focus:border-green-500 focus:ring-green-500 transition-all duration-300">
+                        <i class="ti ti-alert-circle error-icon"></i>
+                    </div>
+                    <div class="error-message">
+                        <i class="ti ti-alert-circle"></i>
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="input-group animate-slide-up" style="animation-delay: 200ms">
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" required placeholder="Enter your password"
+                            class="w-full rounded-lg border border-gray-700 bg-white p-2.5 text-black placeholder-gray-500 focus:border-green-500 focus:ring-green-500 transition-all duration-300">
+                        <span class="password-toggle" onclick="togglePassword()">
+                            <i id="passwordIcon" class="ti ti-eye text-lg"></i>
+                        </span>
+                        <i class="ti ti-alert-circle error-icon"></i>
+                    </div>
+                    <div class="error-message">
+                        <i class="ti ti-alert-circle"></i>
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded border-gray-700 bg-neutral-900 text-green-500 focus:ring-green-500">
+                        <span class="ml-2 text-gray-300">Remember me</span>
+                    </label>
+                    <a href="forgot-password.html" class="text-green-500 hover:underline">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="w-full py-2 px-4 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">
+                    Sign In
+                </button>
+                <div class="mt-4 text-sm text-center text-gray-400">
+                    <p>By signing in, you agree to our</p>
+                    <div class="flex justify-center gap-2">
+                        <a href="terms.html" class="text-green-500 hover:text-green-400">Terms of Service</a>
+                        <span>&bull;</span>
+                        <a href="privacy.html" class="text-green-500 hover:text-green-400">Privacy Policy</a>
+                    </div>
+                </div>
+
+                <p class="text-sm text-gray-400 text-center animate-slide-up" style="animation-delay: 400ms">
+                    Don't have an account?
+                    <a href="onboarding.html" class="text-green-500 hover:underline">Create one</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="absolute top-4 right-4">
+        <label class="toggle-switch">
+            <input type="checkbox" id="themeToggle">
+            <span class="toggle-slider">
+                <i class="ti ti-sun toggle-icon sun-icon"></i>
+                <i class="ti ti-moon toggle-icon moon-icon"></i>
+            </span>
+        </label>
+    </div>
+
+    <script>
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            body.classList.add('light-mode');
+            themeToggle.checked = true;
+        }
+
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                body.classList.add('light-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        const form = document.getElementById('signinForm');
+        const inputs = form.querySelectorAll('input');
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const passwordIcon = document.getElementById('passwordIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.classList.remove('ti-eye');
+                passwordIcon.classList.add('ti-eye-off');
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.classList.remove('ti-eye-off');
+                passwordIcon.classList.add('ti-eye');
+            }
+        }
+
+        function showError(input, message) {
+            const inputGroup = input.closest('.input-group');
+            const errorIcon = inputGroup.querySelector('.error-icon');
+            const errorMessage = inputGroup.querySelector('.error-message');
+            const errorText = errorMessage.querySelector('span');
+            
+            input.classList.add('input-error');
+            errorIcon.style.display = 'block';
+            errorMessage.classList.add('show');
+            errorText.textContent = message;
+
+            // Remove error after 3 seconds
+            setTimeout(() => {
+                clearError(input);
+            }, 3000);
+        }
+
+        function clearError(input) {
+            const inputGroup = input.closest('.input-group');
+            const errorIcon = inputGroup.querySelector('.error-icon');
+            const errorMessage = inputGroup.querySelector('.error-message');
+            
+            input.classList.remove('input-error');
+            errorIcon.style.display = 'none';
+            errorMessage.classList.remove('show');
+        }
+
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                clearError(input);
+            });
+        });
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const remember = document.querySelector('input[type="checkbox"]').checked;
+            
+            // Simple validation
+            if (!email.value) {
+                showError(email, 'Please enter your email address');
+                return;
+            }
+            
+            if (!email.value.includes('@')) {
+                showError(email, 'Please enter a valid email address');
+                return;
+            }
+            
+            if (!password.value) {
+                showError(password, 'Please enter your password');
+                return;
+            }
+
+            // Check if user exists in localStorage
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            if (!userData || userData.email !== email.value) {
+                showError(email, 'No account found with this email');
+                return;
+            }
+
+            // Store session based on remember me checkbox
+            if (remember) {
+                localStorage.setItem('sessionActive', 'true');
+            } else {
+                sessionStorage.setItem('sessionActive', 'true');
+            }
+
+            // Store current user data
+            localStorage.setItem('currentUser', JSON.stringify({
+                email: email.value,
+                username: userData.username
+            }));
+
+            // Redirect to home page
+            window.location.href = 'home.html';
+        });
+    </script>
+</body>
+</html>

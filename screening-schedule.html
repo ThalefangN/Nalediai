@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screening Schedule - Beat Cancer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Add Tabler Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+</head>
+<body class="bg-[#13131a] text-white">
+    <nav class="bg-[#1c1c24] p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-white text-xl font-bold">Beat Cancer</a>
+            <div class="flex gap-4">
+                <a href="index.html" class="text-white hover:text-gray-300">Board</a>
+                <a href="records.html" class="text-white hover:text-gray-300">Records</a>
+                <a href="screening-schedule.html" class="text-white hover:text-gray-300">Screening</a>
+                <a href="profile.html" class="text-white hover:text-gray-300">Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold">Screening Schedule</h1>
+            <p class="text-gray-400 mt-2">Manage your screening appointments and follow-ups</p>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-3">
+            <!-- Upcoming Screenings -->
+            <div class="bg-[#1c1c24] rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">Upcoming</h2>
+                <div id="upcomingList" class="space-y-4">
+                    <!-- Screening items will be added here -->
+                </div>
+                <button 
+                    class="mt-4 w-full bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700"
+                    onclick="openAddModal('upcoming')"
+                >
+                    Add Screening
+                </button>
+            </div>
+
+            <!-- Completed Screenings -->
+            <div class="bg-[#1c1c24] rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">Completed</h2>
+                <div id="completedList" class="space-y-4">
+                    <!-- Completed items will be added here -->
+                </div>
+            </div>
+
+            <!-- Follow-ups -->
+            <div class="bg-[#1c1c24] rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">Follow-ups</h2>
+                <div id="followupList" class="space-y-4">
+                    <!-- Follow-up items will be added here -->
+                </div>
+                <button 
+                    class="mt-4 w-full bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700"
+                    onclick="openAddModal('followup')"
+                >
+                    Add Follow-up
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Screening Modal -->
+    <div id="addModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+        <div class="bg-[#1c1c24] p-6 rounded-lg w-full max-w-md">
+            <h2 class="text-xl font-bold mb-4">Add New Screening</h2>
+            <form id="addScreeningForm">
+                <input type="hidden" id="screeningType" value="upcoming">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Title</label>
+                    <input
+                        type="text"
+                        id="screeningTitle"
+                        required
+                        class="w-full rounded-lg bg-neutral-900 px-4 py-3 text-neutral-400 focus:border-blue-600 focus:outline-none"
+                    >
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Date</label>
+                    <input
+                        type="date"
+                        id="screeningDate"
+                        required
+                        class="w-full rounded-lg bg-neutral-900 px-4 py-3 text-neutral-400 focus:border-blue-600 focus:outline-none"
+                    >
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Notes</label>
+                    <textarea
+                        id="screeningNotes"
+                        rows="3"
+                        class="w-full rounded-lg bg-neutral-900 px-4 py-3 text-neutral-400 focus:border-blue-600 focus:outline-none"
+                    ></textarea>
+                </div>
+                <div class="flex justify-end gap-4">
+                    <button
+                        type="button"
+                        class="px-4 py-2 text-gray-400 hover:text-gray-300"
+                        onclick="closeAddModal()"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        Add
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Screening Item Template -->
+    <template id="screeningItemTemplate">
+        <div class="bg-[#2c2c34] rounded-lg p-4">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="font-semibold screening-title"></h3>
+                    <p class="text-sm text-gray-400 screening-date"></p>
+                    <p class="text-sm mt-2 screening-notes"></p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="text-gray-400 hover:text-green-500 complete-btn" title="Mark as Complete">
+                        <i class="ti ti-check"></i>
+                    </button>
+                    <button class="text-gray-400 hover:text-red-500 delete-btn" title="Delete">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // DOM Elements
+        const addModal = document.getElementById('addModal');
+        const addScreeningForm = document.getElementById('addScreeningForm');
+        const screeningTypeInput = document.getElementById('screeningType');
+        const upcomingList = document.getElementById('upcomingList');
+        const completedList = document.getElementById('completedList');
+        const followupList = document.getElementById('followupList');
+        const screeningItemTemplate = document.getElementById('screeningItemTemplate');
+
+        // Load screenings from localStorage
+        let screenings = JSON.parse(localStorage.getItem('screenings')) || {
+            upcoming: [],
+            completed: [],
+            followup: []
+        };
+
+        // Functions
+        function openAddModal(type) {
+            addModal.classList.remove('hidden');
+            screeningTypeInput.value = type;
+        }
+
+        function closeAddModal() {
+            addModal.classList.add('hidden');
+            addScreeningForm.reset();
+        }
+
+        function addScreening(e) {
+            e.preventDefault();
+            const type = screeningTypeInput.value;
+            const screening = {
+                id: Date.now().toString(),
+                title: document.getElementById('screeningTitle').value,
+                date: document.getElementById('screeningDate').value,
+                notes: document.getElementById('screeningNotes').value
+            };
+
+            screenings[type].push(screening);
+            localStorage.setItem('screenings', JSON.stringify(screenings));
+            
+            addScreeningToUI(screening, type);
+            closeAddModal();
+        }
+
+        function addScreeningToUI(screening, type) {
+            const screeningElement = screeningItemTemplate.content.cloneNode(true);
+            screeningElement.querySelector('.screening-title').textContent = screening.title;
+            screeningElement.querySelector('.screening-date').textContent = new Date(screening.date).toLocaleDateString();
+            screeningElement.querySelector('.screening-notes').textContent = screening.notes;
+
+            // Add event listeners
+            screeningElement.querySelector('.complete-btn').addEventListener('click', () => completeScreening(screening.id, type));
+            screeningElement.querySelector('.delete-btn').addEventListener('click', () => deleteScreening(screening.id, type));
+
+            // Add to appropriate list
+            document.getElementById(`${type}List`).appendChild(screeningElement);
+        }
+
+        function completeScreening(id, type) {
+            if (type === 'upcoming') {
+                const screeningIndex = screenings.upcoming.findIndex(s => s.id === id);
+                const screening = screenings.upcoming[screeningIndex];
+                screenings.upcoming.splice(screeningIndex, 1);
+                screenings.completed.push(screening);
+                localStorage.setItem('screenings', JSON.stringify(screenings));
+                refreshLists();
+            }
+        }
+
+        function deleteScreening(id, type) {
+            screenings[type] = screenings[type].filter(s => s.id !== id);
+            localStorage.setItem('screenings', JSON.stringify(screenings));
+            refreshLists();
+        }
+
+        function refreshLists() {
+            upcomingList.innerHTML = '';
+            completedList.innerHTML = '';
+            followupList.innerHTML = '';
+            
+            screenings.upcoming.forEach(s => addScreeningToUI(s, 'upcoming'));
+            screenings.completed.forEach(s => addScreeningToUI(s, 'completed'));
+            screenings.followup.forEach(s => addScreeningToUI(s, 'followup'));
+        }
+
+        // Event Listeners
+        addScreeningForm.addEventListener('submit', addScreening);
+
+        // Initialize
+        refreshLists();
+    </script>
+</body>
+</html>

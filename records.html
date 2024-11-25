@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Records - Beat Cancer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Add Tabler Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+</head>
+<body class="bg-[#13131a] text-white">
+    <nav class="bg-[#1c1c24] p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-white text-xl font-bold">Beat Cancer</a>
+            <div class="flex gap-4">
+                <a href="index.html" class="text-white hover:text-gray-300">Board</a>
+                <a href="records.html" class="text-white hover:text-gray-300">Records</a>
+                <a href="profile.html" class="text-white hover:text-gray-300">Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        <div class="flex flex-wrap gap-[26px]">
+            <button
+                type="button"
+                class="mt-6 inline-flex items-center gap-x-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-[#13131a] dark:text-white dark:hover:bg-neutral-800"
+                id="createRecordBtn"
+            >
+                <i class="ti ti-circle-plus"></i>
+                Create Record
+            </button>
+
+            <div class="grid w-full gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4" id="recordsContainer">
+                <!-- Records will be added here dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Record Modal -->
+    <div id="createRecordModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+        <div class="bg-[#1c1c24] p-6 rounded-lg w-full max-w-md">
+            <h2 class="text-xl font-bold mb-4">Create New Record</h2>
+            <form id="createRecordForm">
+                <div class="mb-4">
+                    <label for="recordName" class="block text-sm font-medium mb-2">Record Name</label>
+                    <input
+                        type="text"
+                        id="recordName"
+                        required
+                        class="w-full rounded-lg bg-neutral-900 px-4 py-3 text-neutral-400 focus:border-blue-600 focus:outline-none"
+                    >
+                </div>
+                <div class="flex justify-end gap-4">
+                    <button
+                        type="button"
+                        class="px-4 py-2 text-gray-400 hover:text-gray-300"
+                        onclick="closeModal()"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        Create
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Record Card Template -->
+    <template id="recordCardTemplate">
+        <div class="flex flex-col rounded-xl border border-gray-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-[#1c1c24]">
+            <div class="p-4 md:p-5">
+                <h3 class="text-lg font-bold text-gray-800 dark:text-white record-name"></h3>
+                <p class="mt-1 text-gray-500 dark:text-gray-400 record-date"></p>
+                <a class="mt-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="#">
+                    View Record
+                    <i class="ti ti-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // DOM Elements
+        const createRecordBtn = document.getElementById('createRecordBtn');
+        const createRecordModal = document.getElementById('createRecordModal');
+        const createRecordForm = document.getElementById('createRecordForm');
+        const recordsContainer = document.getElementById('recordsContainer');
+        const recordCardTemplate = document.getElementById('recordCardTemplate');
+
+        // Event Listeners
+        createRecordBtn.addEventListener('click', openModal);
+        createRecordForm.addEventListener('submit', handleCreateRecord);
+
+        // Functions
+        function openModal() {
+            createRecordModal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            createRecordModal.classList.add('hidden');
+            createRecordForm.reset();
+        }
+
+        function handleCreateRecord(e) {
+            e.preventDefault();
+            const recordName = document.getElementById('recordName').value;
+            const record = {
+                recordName,
+                createdAt: new Date().toISOString(),
+                analysisResult: '',
+                kanbanRecords: ''
+            };
+
+            // Get existing records or initialize empty array
+            const records = JSON.parse(localStorage.getItem('userRecords') || '[]');
+            records.push(record);
+            localStorage.setItem('userRecords', JSON.stringify(records));
+
+            // Add new record to the UI
+            addRecordToUI(record);
+            closeModal();
+        }
+
+        function addRecordToUI(record) {
+            const recordCard = recordCardTemplate.content.cloneNode(true);
+            recordCard.querySelector('.record-name').textContent = record.recordName;
+            recordCard.querySelector('.record-date').textContent = new Date(record.createdAt).toLocaleDateString();
+            recordCard.querySelector('a').href = `record-details.html?name=${encodeURIComponent(record.recordName)}`;
+            recordsContainer.appendChild(recordCard);
+        }
+
+        // Initialize records from localStorage
+        function initializeRecords() {
+            const records = JSON.parse(localStorage.getItem('userRecords') || '[]');
+            records.forEach(record => addRecordToUI(record));
+        }
+
+        // Load records when page loads
+        window.addEventListener('DOMContentLoaded', initializeRecords);
+    </script>
+</body>
+</html>

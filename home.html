@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NalediAI - Mental Health Support</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        :root {
+            --bg-primary: #13131a;
+            --bg-secondary: #1c1c24;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+        }
+
+        .light-mode {
+            --bg-primary: #f7fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .theme-card {
+            background-color: var(--bg-secondary);
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            width: 50px;
+            height: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #4a5568;
+            transition: 0.4s;
+            border-radius: 25px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 19px;
+            width: 19px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #22c55e;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(25px);
+        }
+
+        .toggle-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .sun-icon {
+            right: 7px;
+        }
+
+        .moon-icon {
+            left: 7px;
+        }
+
+        /* Header Animation */
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-animate {
+            animation: slideDown 0.5s ease-out forwards;
+        }
+
+        /* Profile Button Animation */
+        .profile-btn {
+            transition: all 0.3s ease;
+        }
+
+        .profile-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Navigation Styles */
+        .nav-link {
+            color: var(--text-primary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #22c55e;
+            background-color: rgba(34, 197, 94, 0.1);
+        }
+
+        .nav-link i {
+            margin-right: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        /* Mood Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .mood-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .mood-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .mood-item:hover {
+            transform: translateY(-5px);
+            background-color: rgba(34, 197, 94, 0.1);
+        }
+
+        .mood-item.selected {
+            background-color: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            transform: scale(1.05);
+        }
+
+        .mood-emoji {
+            font-size: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .mood-history {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .mood-entry {
+            background-color: rgba(34, 197, 94, 0.1);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .mood-entry:hover {
+            transform: scale(1.05);
+            background-color: rgba(34, 197, 94, 0.2);
+        }
+
+        .save-animation {
+            animation: savePulse 1s ease-out;
+        }
+
+        @keyframes savePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .success-message {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #22c55e;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            animation: fadeInOut 2s ease-in-out;
+            z-index: 1100;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, 20px); }
+            20% { opacity: 1; transform: translate(-50%, 0); }
+            80% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -20px); }
+        }
+
+        /* Grid Button Styles */
+        .grid-buttons {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.4rem;
+            padding: 0.4rem;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0.5rem auto;
+            margin-top: 4rem;
+        }
+
+        .grid-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .grid-button i {
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+            color: #22c55e;
+        }
+
+        .grid-button span {
+            font-weight: 500;
+            font-size: 0.7rem;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                overflow-x: hidden;
+                width: 100%;
+                position: relative;
+            }
+
+            main {
+                overflow-x: hidden;
+                width: 100%;
+                padding: 0 0.5rem;
+            }
+
+            .grid-buttons {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.3rem;
+                padding: 0.3rem;
+                margin: 0.25rem auto;
+                margin-top: 3.5rem;
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .grid-button {
+                padding: 0.35rem;
+                width: 100%;
+                min-height: 3.5rem;
+            }
+            
+            .grid-button i {
+                font-size: 0.85rem;
+                margin-bottom: 0.15rem;
+            }
+            
+            .grid-button span {
+                font-size: 0.6rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
+                padding: 0 0.1rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .grid-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Responsive Design Improvements */
+        @media (max-width: 640px) {
+            .container {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+                padding: 1rem;
+            }
+            
+            .mood-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .nav-link {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .nav-link i {
+                margin-right: 0.25rem;
+            }
+        }
+
+        /* Main Layout Fixes */
+        main {
+            padding-top: 4rem;
+            padding-bottom: 2rem;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .welcome-message {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding-top: 3.5rem;
+            }
+
+            .welcome-message {
+                margin: 0.25rem 0;
+                padding: 0.25rem;
+            }
+
+            .welcome-message h2 {
+                font-size: 1.1rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .welcome-message p {
+                font-size: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .grid-buttons {
+                margin: 0.25rem 0;
+            }
+
+            /* Adjust header height */
+            header {
+                height: 3.5rem;
+            }
+
+            .container {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+
+            /* Adjust main content spacing */
+            .mb-6 {
+                margin-bottom: 1rem;
+            }
+
+            h1.text-2xl {
+                font-size: 1.25rem;
+            }
+
+            p.text-gray-400 {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Welcome Message Animation */
+        @keyframes wave {
+            0% { transform: rotate(0deg); }
+            10% { transform: rotate(14deg); }
+            20% { transform: rotate(-8deg); }
+            30% { transform: rotate(14deg); }
+            40% { transform: rotate(-4deg); }
+            50% { transform: rotate(10deg); }
+            60% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .waving-hand {
+            display: inline-block;
+            animation: wave 2.5s infinite;
+            transform-origin: 70% 70%;
+        }
+
+        .welcome-message {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+            margin: 1rem 0;
+            padding: 0.5rem;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-name {
+            color: #22c55e;
+            font-weight: 600;
+        }
+
+        /* Resource Cards Styles */
+        .resources-section {
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .resource-card {
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-2px);
+            border-color: #22c55e;
+        }
+
+        .resource-card h3 {
+            color: #22c55e;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .resource-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .resource-item {
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .resource-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .org-name {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .contact-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.4rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            background-color: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+
+        .contact-btn:hover {
+            background-color: #22c55e;
+            color: white;
+        }
+
+        .contact-btn i {
+            margin-right: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .resources-section {
+                padding: 0.75rem;
+                margin-top: 1.5rem;
+            }
+
+            .resource-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .resource-card {
+                padding: 1rem;
+            }
+
+            .resource-card h3 {
+                font-size: 1rem;
+            }
+
+            .org-name {
+                font-size: 0.9rem;
+            }
+
+            .contact-btn {
+                padding: 0.35rem 0.6rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Join Community Section Styles */
+        .join-community {
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .join-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            background: linear-gradient(to right, #22c55e, #16a34a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .join-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.75rem;
+            font-size: 1rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @keyframes glowing {
+            0% {
+                box-shadow: 0 0 5px #22c55e,
+                            0 0 10px #22c55e,
+                            0 0 15px #22c55e;
+            }
+            50% {
+                box-shadow: 0 0 20px #22c55e,
+                            0 0 25px #22c55e,
+                            0 0 30px #22c55e;
+            }
+            100% {
+                box-shadow: 0 0 5px #22c55e,
+                            0 0 10px #22c55e,
+                            0 0 15px #22c55e;
+            }
+        }
+
+        .join-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            background-color: #22c55e;
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            animation: glowing 2s infinite;
+        }
+
+        .join-button:hover {
+            transform: translateY(-2px);
+            background-color: #16a34a;
+            animation: none;
+            box-shadow: 0 0 30px #22c55e;
+        }
+
+        .join-button i {
+            font-size: 1.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .join-community {
+                padding: 1.5rem 1rem;
+                margin-top: 1.5rem;
+            }
+
+            .join-title {
+                font-size: 1.4rem;
+            }
+
+            .join-description {
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+                padding: 0 1rem;
+            }
+
+            .join-button {
+                padding: 0.75rem 2rem;
+                font-size: 1rem;
+            }
+
+            .join-button i {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Active Status Dot */
+        .active-status {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .active-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+            }
+        }
+
+        /* Mood Button Glow */
+        .mood-button {
+            animation: moodGlow 2s infinite;
+        }
+
+        @keyframes moodGlow {
+            0% {
+                box-shadow: 0 0 5px rgba(34, 197, 94, 0.5),
+                            0 0 10px rgba(34, 197, 94, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 15px rgba(34, 197, 94, 0.8),
+                            0 0 20px rgba(34, 197, 94, 0.5);
+            }
+            100% {
+                box-shadow: 0 0 5px rgba(34, 197, 94, 0.5),
+                            0 0 10px rgba(34, 197, 94, 0.3);
+            }
+        }
+
+        .mood-button:hover {
+            animation: none;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Theme Toggle and Profile -->
+    <header class="fixed w-full top-0 z-50 theme-card shadow-lg header-animate">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold">NalediAI</h1>
+                </div>
+
+                <!-- Right Side Controls -->
+                <div class="flex items-center space-x-6">
+                    <!-- Active Status Dot -->
+                    <div class="active-status">
+                        <div class="active-dot"></div>
+                        <span class="text-sm text-gray-400">Active</span>
+                    </div>
+
+                    <!-- Theme Toggle -->
+                    <div class="flex items-center">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="themeToggle">
+                            <span class="toggle-slider">
+                                <i class="ti ti-sun toggle-icon sun-icon"></i>
+                                <i class="ti ti-moon toggle-icon moon-icon"></i>
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Profile/Logout Button -->
+                    <div class="relative">
+                        <button id="profileBtn" class="profile-btn flex items-center space-x-2 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-all duration-300">
+                            <i class="ti ti-user"></i>
+                            <span>Logout</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="mt-12"> 
+            <div class="grid-buttons">
+                <a href="chat.html" class="grid-button">
+                    <i class="ti ti-messages"></i>
+                    <span>Chat</span>
+                </a>
+                <a href="incognito-chat.html" class="grid-button">
+                    <i class="ti ti-message-off"></i>
+                    <span>Incognito Chat</span>
+                </a>
+                <a href="wearables.html" class="grid-button">
+                    <i class="ti ti-device-watch"></i>
+                    <span>Wearables</span>
+                </a>
+                <a href="exercises.html" class="grid-button">
+                    <i class="ti ti-activity"></i>
+                    <span>Exercises</span>
+                </a>
+                <a href="crisis-resources.html" class="grid-button">
+                    <i class="ti ti-emergency-bed"></i>
+                    <span>Crisis Resources</span>
+                </a>
+                <a href="#" class="grid-button">
+                    <i class="ti ti-books"></i>
+                    <span>Resources</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+        <div class="mx-auto p-6">
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold">Mental Health Dashboard</h1>
+                <p class="text-gray-400 mt-2">Track your progress and access support resources</p>
+            </div>
+
+            <!-- Welcome Message -->
+            <div class="welcome-message">
+                <h2 class="text-xl mb-1">Hello <span class="user-name" id="userName">User</span> <span class="waving-hand">👋</span></h2>
+                <p class="text-sm text-gray-400 mb-2">Welcome to NalediAI</p>
+            </div>
+
+            <!-- Today's Mood Container -->
+            <div class="bg-[#1c1c24] rounded-xl p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold">Today's Mood</h2>
+                    <button id="updateMoodBtn" class="mood-button theme-card flex items-center gap-2 px-4 py-2.5 rounded-lg border border-green-500/30">
+                        <i class="ti ti-mood-smile text-xl text-green-500"></i>
+                        <span>Update Mood</span>
+                    </button>
+                </div>
+                <div id="moodHistory" class="mood-history">
+                    <!-- Mood entries will be added here dynamically -->
+                </div>
+            </div>
+
+            <!-- Chat Interface -->
+            <div class="bg-[#1c1c24] rounded-xl p-4 mb-6">
+                <div class="h-[400px] overflow-y-auto mb-4 bg-neutral-900 p-4 rounded-lg" id="chatMessages">
+                    <!-- Chat messages will appear here -->
+                    <div class="flex mb-4">
+                        <div class="bg-green-600 text-white rounded-lg p-3 max-w-[80%]">
+                            Hello! I'm your NalediAI mental health companion. How are you feeling today?
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <input type="text" id="messageInput" class="flex-1 bg-neutral-900 border border-gray-700 rounded-lg px-4 py-2 text-white" placeholder="Type your message...">
+                    <button id="sendMessage" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded-lg">Send</button>
+                </div>
+            </div>
+
+            <!-- Main Metrics -->
+            <div class="mt-7 grid w-full gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-2">
+                <!-- Mood Tracking -->
+                <div class="flex flex-col rounded-xl border bg-white shadow-sm dark:border-neutral-800 dark:bg-[#1c1c24]">
+                    <div class="flex justify-between gap-x-3 p-4 md:p-5">
+                        <div>
+                            <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">
+                                Today's Mood
+                            </p>
+                            <div class="mt-1 flex items-center gap-x-2">
+                                <h3 class="text-xl font-medium text-gray-800 sm:text-2xl dark:text-neutral-200" id="moodTracker">
+                                    Neutral
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="flex size-[46px] h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-green-600 text-white dark:bg-neutral-900">
+                            <i class="ti ti-mood-smile text-green-500"></i>
+                        </div>
+                    </div>
+                    <a href="#" class="inline-flex items-center justify-between rounded-b-xl border-t border-gray-200 px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 md:px-5 dark:border-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800">
+                        Update Mood
+                        <i class="ti ti-chevron-right"></i>
+                    </a>
+                </div>
+
+                <!-- Exercises Completed -->
+                <div class="flex flex-col rounded-xl border bg-white shadow-sm dark:border-neutral-800 dark:bg-[#1c1c24]">
+                    <div class="flex justify-between gap-x-3 p-4 md:p-5">
+                        <div>
+                            <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-neutral-500">
+                                Exercises Completed
+                            </p>
+                            <div class="mt-1 flex items-center gap-x-2">
+                                <h3 class="text-xl font-medium text-gray-800 sm:text-2xl dark:text-neutral-200" id="exercisesCompleted">
+                                    0
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="flex size-[46px] h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-green-600 text-white dark:bg-neutral-900">
+                            <i class="ti ti-activity text-green-500"></i>
+                        </div>
+                    </div>
+                    <a href="#exercises" class="inline-flex items-center justify-between rounded-b-xl border-t border-gray-200 px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 md:px-5 dark:border-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800">
+                        View Exercises
+                        <i class="ti ti-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Mental Health Resources Section -->
+            <div class="resources-section">
+                <h2 class="text-xl font-bold mb-4">Mental Health Resources</h2>
+                <div class="resource-grid">
+                    <!-- Crisis Helplines -->
+                    <div class="resource-card">
+                        <h3>Crisis Helplines</h3>
+                        <ul class="resource-list">
+                            <li class="resource-item">
+                                <div class="org-name">Botswana Police Service</div>
+                                <div class="contact-buttons">
+                                    <a href="tel:999" class="contact-btn">
+                                        <i class="ti ti-phone"></i>
+                                        999
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="resource-item">
+                                <div class="org-name">Lifeline Botswana</div>
+                                <div class="contact-buttons">
+                                    <a href="tel:3911270" class="contact-btn">
+                                        <i class="ti ti-phone"></i>
+                                        3911270
+                                    </a>
+                                    <a href="https://wa.me/26773393393" class="contact-btn">
+                                        <i class="ti ti-brand-whatsapp"></i>
+                                        WhatsApp
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="resource-item">
+                                <div class="org-name">Botswana Gender Based Violence Prevention & Support Centre</div>
+                                <div class="contact-buttons">
+                                    <a href="tel:3959244" class="contact-btn">
+                                        <i class="ti ti-phone"></i>
+                                        3959244
+                                    </a>
+                                    <a href="mailto:info@bgbvc.org.bw" class="contact-btn">
+                                        <i class="ti ti-mail"></i>
+                                        Email
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Professional Help -->
+                    <div class="resource-card">
+                        <h3>Professional Help</h3>
+                        <ul class="resource-list">
+                            <li class="resource-item">
+                                <div class="org-name">Sbrana Psychiatric Hospital</div>
+                                <div class="contact-buttons">
+                                    <a href="tel:2674037" class="contact-btn">
+                                        <i class="ti ti-phone"></i>
+                                        2674037
+                                    </a>
+                                    <a href="mailto:sbrana@gov.bw" class="contact-btn">
+                                        <i class="ti ti-mail"></i>
+                                        Email
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="resource-item">
+                                <div class="org-name">Tshepong Clinic</div>
+                                <div class="contact-buttons">
+                                    <a href="tel:3162774" class="contact-btn">
+                                        <i class="ti ti-phone"></i>
+                                        3162774
+                                    </a>
+                                    <a href="https://wa.me/26771333444" class="contact-btn">
+                                        <i class="ti ti-brand-whatsapp"></i>
+                                        WhatsApp
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Support Groups -->
+                    <div class="resource-card">
+                        <h3>Support Groups & Organizations</h3>
+                        <ul class="resource-list">
+                            <li class="resource-item">
+                                <div class="org-name">Mental Health Society Botswana</div>
+                                <div class="contact-buttons">
+                                    <a href="tel:3911270" class="contact-btn">
+                                        <i class="ti ti-phone"></i>
+                                        3911270
+                                    </a>
+                                    <a href="mailto:info@mhsbots.org" class="contact-btn">
+                                        <i class="ti ti-mail"></i>
+                                        Email
+                                    </a>
+                                    <a href="https://wa.me/26772345678" class="contact-btn">
+                                        <i class="ti ti-brand-whatsapp"></i>
+                                        WhatsApp
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="resource-item">
+                                <div class="org-name">African Mental Health Alliance</div>
+                                <div class="contact-buttons">
+                                    <a href="https://africanmha.org" class="contact-btn">
+                                        <i class="ti ti-world"></i>
+                                        Website
+                                    </a>
+                                    <a href="mailto:contact@africanmha.org" class="contact-btn">
+                                        <i class="ti ti-mail"></i>
+                                        Email
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        <!-- Join Community Section -->
+        <div class="join-community">
+            <h2 class="join-title">Join Our Community</h2>
+            <p class="join-description">Connect with others, share experiences, and get support from people who understand.</p>
+            <a href="signup.php" class="join-button">
+                <i class="ti ti-users"></i>
+                JOIN NOW
+            </a>
+        </div>
+    </main>
+
+    <!-- Mood Update Modal -->
+    <div id="moodModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 class="text-2xl font-bold mb-4">How are you feeling today?</h2>
+            <div class="mood-grid">
+                <div class="mood-item" data-mood="amazing">
+                    <span class="mood-emoji">😄</span>
+                    <span class="text-sm mt-2">Amazing</span>
+                </div>
+                <div class="mood-item" data-mood="good">
+                    <span class="mood-emoji">🙂</span>
+                    <span class="text-sm mt-2">Good</span>
+                </div>
+                <div class="mood-item" data-mood="okay">
+                    <span class="mood-emoji">😐</span>
+                    <span class="text-sm mt-2">Okay</span>
+                </div>
+                <div class="mood-item" data-mood="meh">
+                    <span class="mood-emoji">😕</span>
+                    <span class="text-sm mt-2">Meh</span>
+                </div>
+                <div class="mood-item" data-mood="sad">
+                    <span class="mood-emoji">😢</span>
+                    <span class="text-sm mt-2">Sad</span>
+                </div>
+                <div class="mood-item" data-mood="angry">
+                    <span class="mood-emoji">😠</span>
+                    <span class="text-sm mt-2">Angry</span>
+                </div>
+                <div class="mood-item" data-mood="anxious">
+                    <span class="mood-emoji">😰</span>
+                    <span class="text-sm mt-2">Anxious</span>
+                </div>
+                <div class="mood-item" data-mood="tired">
+                    <span class="mood-emoji">😴</span>
+                    <span class="text-sm mt-2">Tired</span>
+                </div>
+            </div>
+            <div class="mt-4">
+                <label class="block text-sm font-medium mb-2">How do you feel? (Optional)</label>
+                <textarea id="moodNote" class="w-full px-3 py-2 bg-neutral-900 border border-gray-700 rounded-lg focus:outline-none focus:border-green-500" rows="3"></textarea>
+            </div>
+            <button id="saveMoodBtn" class="w-full mt-4 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all">
+                Save Mood
+            </button>
+        </div>
+    </div>
+
+    <!-- Mood Detail Modal -->
+    <div id="moodDetailModal" class="modal mood-detail-modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 class="text-2xl font-bold mb-4">Mood Details</h2>
+            <div id="moodDetailContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            body.classList.add('light-mode');
+            themeToggle.checked = true;
+        }
+
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                body.classList.add('light-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Profile/Logout Button
+        document.getElementById('profileBtn').addEventListener('click', () => {
+            // Clear user data
+            localStorage.removeItem('userData');
+            localStorage.removeItem('sessionActive');
+            sessionStorage.removeItem('sessionActive');
+            
+            // Redirect to signin page
+            window.location.href = 'signin.html';
+        });
+
+        // Check if user is logged in
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('sessionActive') || sessionStorage.getItem('sessionActive');
+            if (!isLoggedIn) {
+                window.location.href = 'signin.html';
+            }
+        }
+
+        // Run auth check when page loads
+        checkAuth();
+
+        // Simple chat functionality
+        const messageInput = document.getElementById('messageInput');
+        const sendMessage = document.getElementById('sendMessage');
+        const chatMessages = document.getElementById('chatMessages');
+
+        sendMessage.addEventListener('click', () => {
+            const message = messageInput.value.trim();
+            if (message) {
+                // Add user message
+                const userDiv = document.createElement('div');
+                userDiv.className = 'flex justify-end mb-4';
+                userDiv.innerHTML = `
+                    <div class="bg-neutral-900 text-white rounded-lg p-3 max-w-[80%]">
+                        ${message}
+                    </div>
+                `;
+                chatMessages.appendChild(userDiv);
+                
+                // Clear input
+                messageInput.value = '';
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    const aiDiv = document.createElement('div');
+                    aiDiv.className = 'flex mb-4';
+                    aiDiv.innerHTML = `
+                        <div class="bg-green-600 text-white rounded-lg p-3 max-w-[80%]">
+                            I hear you. Would you like to talk more about how you're feeling?
+                        </div>
+                    `;
+                    chatMessages.appendChild(aiDiv);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+            }
+        });
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage.click();
+            }
+        });
+
+        // Mood Tracking Functionality
+        const moodModal = document.getElementById('moodModal');
+        const moodDetailModal = document.getElementById('moodDetailModal');
+        const updateMoodBtn = document.getElementById('updateMoodBtn');
+        const moodHistory = document.getElementById('moodHistory');
+        const saveMoodBtn = document.getElementById('saveMoodBtn');
+        const closeBtns = document.querySelectorAll('.close-btn');
+        const moodItems = document.querySelectorAll('.mood-item');
+        let selectedMood = null;
+
+        // Open mood modal
+        updateMoodBtn.addEventListener('click', () => {
+            moodModal.classList.add('show');
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === moodModal) {
+                moodModal.classList.remove('show');
+            }
+            if (e.target === moodDetailModal) {
+                moodDetailModal.classList.remove('show');
+            }
+        });
+
+        // Close modals with close button
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                moodModal.classList.remove('show');
+                moodDetailModal.classList.remove('show');
+            });
+        });
+
+        // Select mood with animation
+        moodItems.forEach(item => {
+            item.addEventListener('click', () => {
+                moodItems.forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                selectedMood = item.dataset.mood;
+                
+                // Add pulse animation
+                item.style.animation = 'none';
+                item.offsetHeight; // Trigger reflow
+                item.style.animation = 'savePulse 0.5s ease-out';
+            });
+        });
+
+        // Show success message
+        function showSuccessMessage() {
+            const message = document.createElement('div');
+            message.className = 'success-message';
+            message.textContent = 'Mood saved successfully! 🎉';
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.remove();
+            }, 2000);
+        }
+
+        // Save mood with animation
+        saveMoodBtn.addEventListener('click', () => {
+            if (!selectedMood) {
+                alert('Please select a mood');
+                return;
+            }
+
+            const moodData = {
+                mood: selectedMood,
+                emoji: document.querySelector(`.mood-item[data-mood="${selectedMood}"] .mood-emoji`).textContent,
+                note: document.getElementById('moodNote').value,
+                date: new Date().toISOString(),
+                id: Date.now()
+            };
+
+            // Get existing moods or initialize empty array
+            const moods = JSON.parse(localStorage.getItem('moods') || '[]');
+            moods.push(moodData);
+            localStorage.setItem('moods', JSON.stringify(moods));
+
+            // Show success message and update history
+            showSuccessMessage();
+            updateMoodHistory();
+            
+            // Close modal and reset form
+            moodModal.classList.remove('show');
+            selectedMood = null;
+            moodItems.forEach(i => i.classList.remove('selected'));
+            document.getElementById('moodNote').value = '';
+        });
+
+        // Update mood history display with animation
+        function updateMoodHistory() {
+            const moods = JSON.parse(localStorage.getItem('moods') || '[]');
+            moodHistory.innerHTML = '';
+
+            moods.slice().reverse().forEach((mood, index) => {
+                const date = new Date(mood.date);
+                const entry = document.createElement('div');
+                entry.className = 'mood-entry';
+                entry.style.animationDelay = `${index * 0.1}s`;
+                entry.innerHTML = `
+                    <span class="mood-emoji">${mood.emoji}</span>
+                    <span class="text-sm">${date.toLocaleDateString()}</span>
+                    <button class="text-green-500 ml-2" onclick="showMoodDetail(${mood.id})">
+                        <i class="ti ti-plus"></i>
+                    </button>
+                `;
+                entry.addEventListener('click', () => showMoodDetail(mood.id));
+                moodHistory.appendChild(entry);
+            });
+        }
+
+        // Show mood detail with animation
+        window.showMoodDetail = function(moodId) {
+            const moods = JSON.parse(localStorage.getItem('moods') || '[]');
+            const mood = moods.find(m => m.id === moodId);
+            if (!mood) return;
+
+            const date = new Date(mood.date);
+            const detailContent = document.getElementById('moodDetailContent');
+            detailContent.innerHTML = `
+                <div class="text-center mb-4">
+                    <span class="mood-emoji text-4xl">${mood.emoji}</span>
+                    <h3 class="text-xl font-bold mt-2">${mood.mood.charAt(0).toUpperCase() + mood.mood.slice(1)}</h3>
+                    <p class="text-gray-400">${date.toLocaleString()}</p>
+                </div>
+                ${mood.note ? `<div class="mt-4">
+                    <h4 class="font-bold mb-2">Notes:</h4>
+                    <p class="text-gray-300">${mood.note}</p>
+                </div>` : ''}
+            `;
+            moodDetailModal.classList.add('show');
+        };
+
+        // Initial load of mood history
+        updateMoodHistory();
+
+        // Get username from session and display it
+        function displayUsername() {
+            const userName = sessionStorage.getItem('username') || 'User';
+            document.getElementById('userName').textContent = userName;
+        }
+
+        // Run when page loads
+        displayUsername();
+    </script>
+</body>
+</html>

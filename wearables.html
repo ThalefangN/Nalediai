@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wearables - NalediAI Mental Health</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        :root {
+            --bg-primary: #13131a;
+            --bg-secondary: #1c1c24;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+        }
+
+        .light-mode {
+            --bg-primary: #f7fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .theme-card {
+            background-color: var(--bg-secondary);
+        }
+
+        /* Navigation Styles */
+        .nav-link {
+            color: var(--text-primary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #22c55e;
+            background-color: rgba(34, 197, 94, 0.1);
+        }
+
+        .nav-link i {
+            margin-right: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            width: 50px;
+            height: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #4a5568;
+            transition: 0.4s;
+            border-radius: 25px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 19px;
+            width: 19px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #22c55e;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(25px);
+        }
+
+        .toggle-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .sun-icon {
+            right: 7px;
+        }
+
+        .moon-icon {
+            left: 7px;
+        }
+
+        /* Wearables Card Styles */
+        .wearable-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .wearable-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric-card {
+            background-color: #1c1c24;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-card {
+            background-color: #1c1c24;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Active Status Dot Animation */
+        .active-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .active-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+            }
+        }
+
+        .active-dot::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #22c55e;
+            opacity: 0.7;
+            animation: pulse 2s infinite;
+        }
+
+        .active-dot::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #22c55e;
+            opacity: 0.3;
+            animation: pulse 2s infinite;
+            animation-delay: 0.5s;
+        }
+
+        /* Grid Button Styles */
+        .grid-buttons {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.4rem;
+            padding: 0.4rem;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0.5rem auto;
+            margin-top: 4rem;
+        }
+
+        .grid-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .grid-button i {
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+            color: #22c55e;
+        }
+
+        .grid-button span {
+            font-weight: 500;
+            font-size: 0.7rem;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .grid-buttons {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.3rem;
+                padding: 0.3rem;
+                margin: 0.25rem auto;
+                margin-top: 3.5rem;
+            }
+            
+            .grid-button {
+                padding: 0.35rem;
+                min-height: 3.5rem;
+            }
+            
+            .grid-button i {
+                font-size: 0.85rem;
+                margin-bottom: 0.15rem;
+            }
+            
+            .grid-button span {
+                font-size: 0.6rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
+                padding: 0 0.1rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .grid-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .device-card {
+            background-color: #1c1c24;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .device-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .device-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .status-warning {
+            background-color: rgba(234, 179, 8, 0.2);
+            color: #eab308;
+        }
+
+        .device-icon-wrapper {
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .device-icon-wrapper.active {
+            background-color: rgba(34, 197, 94, 0.1);
+        }
+
+        .device-icon-wrapper.warning {
+            background-color: rgba(234, 179, 8, 0.1);
+        }
+
+        .add-device-card {
+            cursor: pointer;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+
+        .add-device-card:hover {
+            border-color: rgba(156, 163, 175, 0.3);
+        }
+
+        .add-device-icon {
+            background-color: rgba(156, 163, 175, 0.1);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .add-device-card:hover .add-device-icon {
+            background-color: rgba(156, 163, 175, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Dialog Styles */
+        .dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .dialog-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .dialog-content {
+            background-color: #1c1c24;
+            border-radius: 1rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .dialog-overlay.active .dialog-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .connection-step {
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .connection-step.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .device-type-btn {
+            background-color: #2d2d3b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .device-type-btn:hover {
+            border-color: #22c55e;
+            transform: translateY(-2px);
+        }
+
+        .success-animation {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background-color: #22c55e;
+            position: relative;
+            transform: scale(0);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .success-animation.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .success-animation::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 15px;
+            border: 3px solid #fff;
+            border-top: none;
+            border-right: none;
+            transform: translate(-50%, -60%) rotate(-45deg);
+        }
+
+        .connecting-animation {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto;
+            border: 4px solid rgba(34, 197, 94, 0.3);
+            border-top-color: #22c55e;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes deviceAppear {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(147, 51, 234, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(147, 51, 234, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(147, 51, 234, 0); }
+        }
+        @keyframes searchingPulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
+        @keyframes searchingRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes slideUp {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes slideDown {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(20px); opacity: 0; }
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        .device-appear {
+            animation: deviceAppear 0.6s ease-out forwards;
+        }
+        .device-pulse {
+            animation: pulseGlow 1.5s infinite;
+        }
+        .searching-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+        }
+        .searching-circle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 3px solid #9333ea;
+            border-radius: 50%;
+            animation: searchingPulse 2s infinite;
+        }
+        .searching-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #9333ea;
+            font-size: 2rem;
+            animation: searchingRotate 2s linear infinite;
+        }
+        .slide-up {
+            animation: slideUp 0.3s ease-out forwards;
+        }
+        .slide-down {
+            animation: slideDown 0.3s ease-out forwards;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        .fade-out {
+            animation: fadeOut 0.3s ease-out forwards;
+        }
+        .modal-overlay {
+            transition: opacity 0.3s ease-out;
+        }
+        .device-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .device-option {
+            transition: all 0.2s ease-out;
+        }
+        .device-option:hover {
+            transform: translateX(8px);
+        }
+        @keyframes successCheckmark {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .success-checkmark {
+            animation: successCheckmark 0.5s ease-out forwards;
+        }
+        .searching-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+        }
+        .searching-circle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 3px solid #9333ea;
+            border-radius: 50%;
+            animation: searchingPulse 3s infinite;
+        }
+        .searching-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #9333ea;
+            font-size: 2.5rem;
+            animation: searchingRotate 3s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Theme Toggle and Profile -->
+    <header class="fixed w-full top-0 z-50 theme-card shadow-lg header-animate">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold">NalediAI</h1>
+                </div>
+
+                <!-- Right Side Controls -->
+                <div class="flex items-center space-x-6">
+                    <!-- Active Status Dot -->
+                    <div class="active-status">
+                        <div class="active-dot"></div>
+                        <span class="text-sm text-gray-400">Active</span>
+                    </div>
+
+                    <!-- Theme Toggle -->
+                    <div class="flex items-center">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="themeToggle">
+                            <span class="toggle-slider">
+                                <i class="ti ti-sun toggle-icon sun-icon"></i>
+                                <i class="ti ti-moon toggle-icon moon-icon"></i>
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Profile/Logout Button -->
+                    <div class="relative">
+                        <button id="profileBtn" class="profile-btn flex items-center space-x-2 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-all duration-300">
+                            <i class="ti ti-user"></i>
+                            <span>Logout</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Buttons -->
+    <div class="mt-12"> 
+        <div class="grid-buttons">
+            <a href="chat.html" class="grid-button">
+                <i class="ti ti-messages"></i>
+                <span>Chat</span>
+            </a>
+            <a href="incognito-chat.html" class="grid-button">
+                <i class="ti ti-message-off"></i>
+                <span>Incognito Chat</span>
+            </a>
+            <a href="wearables.html" class="grid-button">
+                <i class="ti ti-device-watch"></i>
+                <span>Wearables</span>
+            </a>
+            <a href="exercises.html" class="grid-button">
+                <i class="ti ti-activity"></i>
+                <span>Exercises</span>
+            </a>
+            <a href="crisis-resources.html" class="grid-button">
+                <i class="ti ti-emergency-bed"></i>
+                <span>Crisis Resources</span>
+            </a>
+            <a href="#" class="grid-button">
+                <i class="ti ti-books"></i>
+                <span>Resources</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 pt-20">
+        <!-- Connected Devices -->
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold">Connected Devices</h2>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Device 1: Fitbit -->
+            <div class="device-card">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="device-icon-wrapper active">
+                            <i class="ti ti-device-watch text-2xl text-green-500"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold">Fitbit Sense</h4>
+                            <p class="text-sm text-gray-400">Connected</p>
+                        </div>
+                    </div>
+                    <button class="text-gray-400 hover:text-white transition-colors">
+                        <i class="ti ti-dots-vertical"></i>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Last synced</span>
+                        <span>5 minutes ago</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Battery</span>
+                        <div class="flex items-center gap-2">
+                            <i class="ti ti-battery-3 text-green-500"></i>
+                            <span>82%</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Status</span>
+                        <span class="device-status status-active">Active</span>
+                    </div>
+                    <div class="pt-4 border-t border-gray-800">
+                        <button class="w-full py-2 text-sm text-gray-400 hover:text-white transition-colors flex items-center justify-center gap-2">
+                            <i class="ti ti-refresh"></i>
+                            <span>Sync Now</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Device 2: Apple Watch -->
+            <div class="device-card">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="device-icon-wrapper warning">
+                            <i class="ti ti-device-watch text-2xl text-yellow-500"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold">Apple Watch</h4>
+                            <p class="text-sm text-gray-400">Low Battery</p>
+                        </div>
+                    </div>
+                    <button class="text-gray-400 hover:text-white transition-colors">
+                        <i class="ti ti-dots-vertical"></i>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Last synced</span>
+                        <span>2 hours ago</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Battery</span>
+                        <div class="flex items-center gap-2">
+                            <i class="ti ti-battery-1 text-yellow-500"></i>
+                            <span>15%</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Status</span>
+                        <span class="device-status status-warning">Warning</span>
+                    </div>
+                    <div class="pt-4 border-t border-gray-800">
+                        <button class="w-full py-2 text-sm text-gray-400 hover:text-white transition-colors flex items-center justify-center gap-2">
+                            <i class="ti ti-refresh"></i>
+                            <span>Sync Now</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Device Card -->
+            <div class="device-card add-device-card" onclick="startDeviceConnection()">
+                <div class="add-device-icon">
+                    <i class="ti ti-plus text-3xl text-gray-400"></i>
+                </div>
+                <h4 class="text-lg font-semibold mb-2">Connect New Device</h4>
+                <p class="text-sm text-gray-400">Add a smartwatch or fitness tracker</p>
+            </div>
+        </div>
+
+        <!-- Health Metrics Section -->
+        <div class="theme-card p-4 rounded-lg mb-6">
+            <h2 class="text-2xl font-bold">Health Metrics</h2>
+        </div>
+
+        <!-- Wearables Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Heart Rate -->
+            <div class="metric-card">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-lg font-semibold">Heart Rate</h3>
+                    <i class="ti ti-heart text-red-500 text-xl"></i>
+                </div>
+                <p class="text-3xl font-bold text-green-500">72 <span class="text-sm">bpm</span></p>
+                <p class="text-sm text-gray-400 mt-2">Normal range</p>
+            </div>
+
+            <!-- Sleep -->
+            <div class="metric-card">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-lg font-semibold">Sleep</h3>
+                    <i class="ti ti-moon text-blue-500 text-xl"></i>
+                </div>
+                <p class="text-3xl font-bold text-green-500">7.5 <span class="text-sm">hrs</span></p>
+                <p class="text-sm text-gray-400 mt-2">Last night</p>
+            </div>
+
+            <!-- Steps -->
+            <div class="metric-card">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-lg font-semibold">Steps</h3>
+                    <i class="ti ti-shoe text-yellow-500 text-xl"></i>
+                </div>
+                <p class="text-3xl font-bold text-green-500">8,432</p>
+                <p class="text-sm text-gray-400 mt-2">Today's count</p>
+            </div>
+
+            <!-- Stress Level -->
+            <div class="metric-card">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-lg font-semibold">Stress Level</h3>
+                    <i class="ti ti-wave-sine text-purple-500 text-xl"></i>
+                </div>
+                <p class="text-3xl font-bold text-yellow-500">Medium</p>
+                <p class="text-sm text-gray-400 mt-2">Based on HRV</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Device Dialog -->
+    <div id="deviceDialog" class="dialog-overlay">
+        <div class="dialog-content">
+            <!-- Step 1: Choose Connection Method -->
+            <div id="step1" class="connection-step active">
+                <h3 class="text-xl font-bold mb-6">Choose Connection Method</h3>
+                <div class="grid grid-cols-1 gap-4 mb-6">
+                    <button class="device-type-btn" onclick="requestBluetoothPermission()">
+                        <div class="flex items-center gap-3">
+                            <i class="ti ti-bluetooth text-2xl text-blue-500"></i>
+                            <div class="text-left">
+                                <span class="block font-semibold">Bluetooth</span>
+                                <span class="text-sm text-gray-400">Connect using Bluetooth</span>
+                            </div>
+                        </div>
+                    </button>
+                    <button class="device-type-btn" onclick="startWiFiConnection()">
+                        <div class="flex items-center gap-3">
+                            <i class="ti ti-wifi text-2xl text-green-500"></i>
+                            <div class="text-left">
+                                <span class="block font-semibold">Wi-Fi</span>
+                                <span class="text-sm text-gray-400">Connect over local network</span>
+                            </div>
+                        </div>
+                    </button>
+                    <button class="device-type-btn" onclick="startUSBConnection()">
+                        <div class="flex items-center gap-3">
+                            <i class="ti ti-usb text-2xl text-purple-500"></i>
+                            <div class="text-left">
+                                <span class="block font-semibold">USB</span>
+                                <span class="text-sm text-gray-400">Connect via USB cable</span>
+                            </div>
+                        </div>
+                    </button>
+                    <button class="device-type-btn bg-purple-900 hover:bg-purple-800" onclick="showTempDeviceForm()">
+                        <div class="flex items-center gap-3">
+                            <i class="ti ti-device-watch text-2xl"></i>
+                            <div class="text-left">
+                                <span class="block font-semibold">Temporary Device Animation</span>
+                                <span class="text-sm text-gray-400">Simulate a device connection</span>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                <button class="w-full py-2 text-gray-400 hover:text-white transition-colors" onclick="closeDialog()">
+                    Cancel
+                </button>
+            </div>
+
+            <!-- Step 2: Scanning for Devices -->
+            <div id="step2" class="connection-step">
+                <h3 class="text-xl font-bold mb-6">Scanning for Devices</h3>
+                <div id="scanningStatus" class="mb-6">
+                    <div class="connecting-animation mb-4" id="searchingAnimation"></div>
+                    <p class="text-center text-gray-400">Looking for nearby devices...</p>
+                </div>
+                <div id="deviceList" class="space-y-3 mb-6 hidden">
+                    <!-- Available devices will be inserted here -->
+                </div>
+                <div class="space-y-3">
+                    <button id="rescanButton" class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-all hidden">
+                        Scan Again
+                    </button>
+                    <button class="w-full py-2 text-gray-400 hover:text-white transition-colors" onclick="showStep('step1')">
+                        Back
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Connecting -->
+            <div id="step3" class="connection-step">
+                <h3 class="text-xl font-bold mb-6">Connecting to Device</h3>
+                <div class="connecting-animation mb-6" id="connectingAnimation"></div>
+                <p class="text-center text-gray-400 mb-6" id="connectingStatus">Establishing connection...</p>
+                <button class="w-full py-2 text-gray-400 hover:text-white transition-colors" onclick="cancelConnection()">
+                    Cancel
+                </button>
+            </div>
+
+            <!-- Step 4: Success -->
+            <div id="step4" class="connection-step">
+                <div class="success-animation mb-6" id="successAnimation"></div>
+                <h3 class="text-xl font-bold text-center mb-2">Connected Successfully!</h3>
+                <p class="text-center text-gray-400 mb-6">Your device has been connected and is ready to use.</p>
+                <button class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all" onclick="finishConnection()">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Temporary Device Form -->
+    <div id="tempDeviceForm" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-gray-900 p-6 rounded-lg w-full max-w-md">
+            <h3 class="text-xl font-semibold mb-4">Add Temporary Device</h3>
+            <form onsubmit="addTempDevice(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">Device Name</label>
+                    <input type="text" id="tempDeviceName" class="w-full bg-gray-800 rounded px-3 py-2 text-white" required>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">Device Type</label>
+                    <select id="tempDeviceType" class="w-full bg-gray-800 rounded px-3 py-2 text-white">
+                        <option value="watch">Smart Watch</option>
+                        <option value="band">Fitness Band</option>
+                        <option value="ring">Smart Ring</option>
+                        <option value="patch">Health Patch</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">Battery Level</label>
+                    <input type="range" id="tempDeviceBattery" min="0" max="100" value="85" 
+                        class="w-full accent-purple-500" oninput="this.nextElementSibling.value = this.value + '%'">
+                    <output class="text-sm text-gray-400">85%</output>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="button" onclick="closeTempDeviceForm()" 
+                        class="flex-1 px-4 py-2 bg-gray-800 rounded hover:bg-gray-700 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                        class="flex-1 px-4 py-2 bg-purple-600 rounded hover:bg-purple-700 transition-colors">
+                        Add Device
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Temporary Device Search Dialog -->
+    <div id="tempDeviceSearch" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999;">
+        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1f2937; padding: 24px; border-radius: 8px; width: 90%; max-width: 450px;">
+            <div id="searchingStep" class="text-center">
+                <h3 class="text-xl font-semibold mb-6">Scanning for Devices</h3>
+                <div class="searching-container mb-6">
+                    <div class="searching-circle"></div>
+                    <div class="searching-circle" style="animation-delay: 0.5s"></div>
+                    <div class="searching-circle" style="animation-delay: 1s"></div>
+                    <i class="ti ti-bluetooth searching-icon"></i>
+                </div>
+                <p class="text-gray-400 mb-2">Scanning nearby devices...</p>
+                <p class="text-sm text-gray-500">Please wait while we search for available devices</p>
+                <div class="mt-4">
+                    <button onclick="closeDeviceSearch()" class="px-6 py-2 bg-gray-800 rounded hover:bg-gray-700 transition-colors">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+
+            <div id="deviceListStep" class="hidden">
+                <!-- Device list content -->
+            </div>
+
+            <div id="connectionSuccessStep" class="hidden">
+                <!-- Success content -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            body.classList.add('light-mode');
+            themeToggle.checked = true;
+        }
+
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                body.classList.add('light-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Profile/Logout Button
+        document.getElementById('profileBtn').addEventListener('click', () => {
+            localStorage.removeItem('userData');
+            localStorage.removeItem('sessionActive');
+            sessionStorage.removeItem('sessionActive');
+            window.location.href = 'signin.html';
+        });
+
+        // Check if user is logged in
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('sessionActive') || sessionStorage.getItem('sessionActive');
+            if (!isLoggedIn) {
+                window.location.href = 'signin.html';
+            }
+        }
+
+        // Run auth check when page loads
+        checkAuth();
+
+        // Device Connection Dialog
+        const dialog = document.getElementById('deviceDialog');
+        const deviceList = document.getElementById('deviceList');
+        const rescanButton = document.getElementById('rescanButton');
+        const scanningStatus = document.getElementById('scanningStatus');
+        let bluetoothDevice = null;
+
+        function startDeviceConnection() {
+            dialog.classList.add('active');
+            showStep('step1');
+        }
+
+        async function requestBluetoothPermission() {
+            try {
+                showStep('step2');
+                scanningStatus.innerHTML = `
+                    <div class="text-center mb-6">
+                        <i class="ti ti-bluetooth text-4xl text-blue-500 mb-4 block"></i>
+                        <p class="text-gray-400">Requesting Bluetooth access...</p>
+                        <p class="text-sm text-gray-500 mt-2">Please allow Bluetooth access when prompted</p>
+                    </div>
+                `;
+
+                // Request Bluetooth device with all available options
+                bluetoothDevice = await navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true
+                });
+
+                if (bluetoothDevice) {
+                    showStep('step3');
+                    document.getElementById('connectingStatus').textContent = `Connecting to ${bluetoothDevice.name || 'device'}...`;
+
+                    try {
+                        await bluetoothDevice.gatt.connect();
+                        showStep('step4');
+                        document.getElementById('successAnimation').classList.add('active');
+                    } catch (error) {
+                        throw new Error('Could not connect to device. Please make sure it is turned on.');
+                    }
+                }
+            } catch (error) {
+                if (error.name === 'NotFoundError') {
+                    showError('No Device Selected', 'Please select a device to connect.');
+                } else if (error.name === 'SecurityError') {
+                    showError('Permission Denied', 'Please allow Bluetooth access to connect devices.');
+                } else {
+                    showError('Connection Error', error.message);
+                }
+                showStep('step1');
+            }
+        }
+
+        async function startWiFiConnection() {
+            try {
+                showStep('step2');
+                scanningStatus.innerHTML = `
+                    <div class="text-center">
+                        <i class="ti ti-wifi text-4xl text-green-500 mb-4 block"></i>
+                        <p class="text-gray-400 mb-4">Requesting Wi-Fi access...</p>
+                    </div>
+                `;
+
+                // Request Wi-Fi permission if available
+                if ('NetworkInformation' in window) {
+                    const permission = await navigator.permissions.query({ name: 'network-info' });
+                    if (permission.state === 'denied') {
+                        throw new Error('Wi-Fi access denied. Please check your system settings.');
+                    }
+                }
+
+                // Show Wi-Fi connection instructions
+                setTimeout(() => {
+                    scanningStatus.innerHTML = `
+                        <div class="text-center">
+                            <p class="text-gray-400 mb-4">To connect via Wi-Fi:</p>
+                            <ol class="text-left text-gray-400 space-y-2 mb-4">
+                                <li>1. Make sure your device is in Wi-Fi pairing mode</li>
+                                <li>2. Connect your device to the same Wi-Fi network</li>
+                                <li>3. Follow the pairing instructions on your device</li>
+                            </ol>
+                            <div class="mt-6">
+                                <button onclick="searchWiFiDevices()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all">
+                                    Search for Devices
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }, 1500);
+            } catch (error) {
+                showError('Wi-Fi Access', error.message);
+                showStep('step1');
+            }
+        }
+
+        async function searchWiFiDevices() {
+            scanningStatus.innerHTML = `
+                <div class="text-center">
+                    <div class="connecting-animation mb-4"></div>
+                    <p class="text-gray-400">Scanning for devices on your network...</p>
+                </div>
+            `;
+
+            // Simulate finding devices (in a real app, this would use your backend API)
+            setTimeout(() => {
+                deviceList.classList.remove('hidden');
+                scanningStatus.classList.add('hidden');
+                deviceList.innerHTML = `
+                    <button class="w-full p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all text-left mb-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i class="ti ti-device-watch text-2xl text-green-500"></i>
+                                <div>
+                                    <span class="block font-semibold">Device on Network</span>
+                                    <span class="text-sm text-gray-400">192.168.1.100</span>
+                                </div>
+                            </div>
+                            <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all">
+                                Connect
+                            </button>
+                        </div>
+                    </button>
+                `;
+            }, 2000);
+        }
+
+        async function startUSBConnection() {
+            try {
+                showStep('step2');
+                scanningStatus.innerHTML = `
+                    <div class="text-center">
+                        <i class="ti ti-usb text-4xl text-purple-500 mb-4 block"></i>
+                        <p class="text-gray-400">Requesting USB access...</p>
+                    </div>
+                `;
+
+                // Check if USB is supported
+                if (!navigator.usb) {
+                    throw new Error('USB access is not supported in this browser. Please try a different browser or connection method.');
+                }
+
+                // Request USB device
+                const device = await navigator.usb.requestDevice({
+                    filters: [] // Accept any USB device
+                });
+
+                // Show found device
+                deviceList.classList.remove('hidden');
+                scanningStatus.classList.add('hidden');
+                deviceList.innerHTML = `
+                    <button class="w-full p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all text-left">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <i class="ti ti-usb text-2xl text-purple-500"></i>
+                                <div>
+                                    <span class="block font-semibold">${device.productName || 'USB Device'}</span>
+                                    <span class="text-sm text-gray-400">Vendor: ${device.vendorId}, Product: ${device.productId}</span>
+                                </div>
+                            </div>
+                            <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all">
+                                Connect
+                            </button>
+                        </div>
+                    </button>
+                `;
+            } catch (error) {
+                if (error.name === 'NotFoundError') {
+                    scanningStatus.innerHTML = `
+                        <div class="text-center">
+                            <p class="text-yellow-500 mb-4">No USB devices selected</p>
+                            <p class="text-sm text-gray-400">Please make sure your device is:</p>
+                            <ul class="text-sm text-gray-400 mt-2 space-y-1">
+                                <li>• Connected via USB cable</li>
+                                <li>• Properly powered on</li>
+                                <li>• In data transfer mode</li>
+                            </ul>
+                        </div>
+                    `;
+                } else {
+                    showError('USB Access', error.message);
+                }
+                rescanButton.classList.remove('hidden');
+            }
+        }
+
+        function showError(title, message) {
+            const errorDialog = document.createElement('div');
+            errorDialog.className = 'fixed inset-0 flex items-center justify-center z-50';
+            errorDialog.innerHTML = `
+                <div class="bg-red-500 bg-opacity-10 p-6 rounded-lg border border-red-500 max-w-md w-full mx-4">
+                    <h4 class="text-lg font-bold text-red-500 mb-2">${title}</h4>
+                    <p class="text-gray-400 mb-4">${message}</p>
+                    <button class="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all" onclick="this.parentElement.parentElement.remove()">
+                        Close
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(errorDialog);
+        }
+
+        function cancelConnection() {
+            if (bluetoothDevice && bluetoothDevice.gatt.connected) {
+                bluetoothDevice.gatt.disconnect();
+            }
+            showStep('step1');
+        }
+
+        function closeDialog() {
+            dialog.classList.remove('active');
+            setTimeout(() => {
+                const steps = document.querySelectorAll('.connection-step');
+                steps.forEach(step => step.classList.remove('active'));
+                document.getElementById('step1').classList.add('active');
+            }, 300);
+        }
+
+        function showStep(stepId) {
+            const steps = document.querySelectorAll('.connection-step');
+            steps.forEach(step => step.classList.remove('active'));
+            const nextStep = document.getElementById(stepId);
+            nextStep.classList.add('active');
+        }
+
+        function finishConnection() {
+            // Add the new device to the grid
+            const deviceGrid = document.querySelector('.grid-cols-1.lg\\:grid-cols-3');
+            const newDevice = document.createElement('div');
+            newDevice.className = 'device-card';
+            newDevice.innerHTML = `
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="device-icon-wrapper active">
+                            <i class="ti ti-device-watch text-2xl text-green-500"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold">New Device</h4>
+                            <p class="text-sm text-gray-400">Connected</p>
+                        </div>
+                    </div>
+                    <button class="text-gray-400 hover:text-white transition-colors">
+                        <i class="ti ti-dots-vertical"></i>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Last synced</span>
+                        <span>Just now</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Battery</span>
+                        <div class="flex items-center gap-2">
+                            <i class="ti ti-battery-4 text-green-500"></i>
+                            <span>100%</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Status</span>
+                        <span class="device-status status-active">Active</span>
+                    </div>
+                    <div class="pt-4 border-t border-gray-800">
+                        <button class="w-full py-2 text-sm text-gray-400 hover:text-white transition-colors flex items-center justify-center gap-2">
+                            <i class="ti ti-refresh"></i>
+                            <span>Sync Now</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Insert before the "Add Device" card
+            const addDeviceCard = deviceGrid.lastElementChild;
+            deviceGrid.insertBefore(newDevice, addDeviceCard);
+
+            // Close the dialog
+            closeDialog();
+        }
+
+        const deviceTypes = [
+            { name: 'NalediAI Watch Pro', type: 'watch', battery: 92 },
+            { name: 'NalediAI Fitness Band', type: 'band', battery: 85 },
+            { name: 'NalediAI Health Ring', type: 'ring', battery: 78 },
+            { name: 'NalediAI Vital Patch', type: 'patch', battery: 95 }
+        ];
+
+        function showTempDeviceForm() {
+            const dialog = document.getElementById('tempDeviceSearch');
+            dialog.style.display = 'block';
+            startDeviceSearch();
+        }
+
+        function startDeviceSearch() {
+            const dialog = document.getElementById('tempDeviceSearch');
+            const searchingStep = document.getElementById('searchingStep');
+            const deviceListStep = document.getElementById('deviceListStep');
+            
+            // Reset and show dialog
+            dialog.classList.remove('hidden');
+            searchingStep.classList.remove('hidden');
+            deviceListStep.classList.add('hidden');
+            
+            // Simulate device search for 6 seconds
+            setTimeout(() => {
+                searchingStep.classList.add('fade-out');
+                setTimeout(() => {
+                    searchingStep.classList.add('hidden');
+                    searchingStep.classList.remove('fade-out');
+                    deviceListStep.classList.remove('hidden');
+                    showDeviceList();
+                }, 300);
+            }, 6000); // Changed to 6 seconds
+        }
+
+        function showDeviceList() {
+            const deviceList = document.querySelector('.device-list');
+            deviceList.innerHTML = '';
+            
+            deviceTypes.forEach((device, index) => {
+                const deviceEl = document.createElement('div');
+                deviceEl.className = 'device-option bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700 slide-up';
+                deviceEl.style.animationDelay = `${index * 100}ms`;
+                deviceEl.onclick = () => selectDevice(device);
+                
+                deviceEl.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i class="ti ti-${device.type === 'watch' ? 'device-watch' : 
+                                          device.type === 'band' ? 'device-activity' :
+                                          device.type === 'ring' ? 'ring' : 'heart-rate'} 
+                               text-2xl text-purple-500"></i>
+                            <div>
+                                <span class="block font-semibold">${device.name}</span>
+                                <span class="text-sm text-gray-400">Battery: ${device.battery}%</span>
+                            </div>
+                        </div>
+                        <i class="ti ti-chevron-right text-gray-400"></i>
+                    </div>
+                `;
+                
+                deviceList.appendChild(deviceEl);
+            });
+        }
+
+        function selectDevice(device) {
+            const dialog = document.getElementById('tempDeviceSearch');
+            const deviceListStep = document.getElementById('deviceListStep');
+            const connectionSuccessStep = document.getElementById('connectionSuccessStep');
+
+            // Hide device list and show success message
+            deviceListStep.classList.add('fade-out');
+            setTimeout(() => {
+                deviceListStep.classList.add('hidden');
+                deviceListStep.classList.remove('fade-out');
+                connectionSuccessStep.classList.remove('hidden');
+            }, 300);
+
+            // Store selected device for later
+            window.selectedDevice = device;
+        }
+
+        function closeSuccessAndShowDevice() {
+            const dialog = document.getElementById('tempDeviceSearch');
+            const device = window.selectedDevice;
+
+            dialog.querySelector('.bg-gray-900').classList.add('slide-down');
+            
+            setTimeout(() => {
+                dialog.classList.add('fade-out');
+                setTimeout(() => {
+                    dialog.classList.add('hidden');
+                    dialog.classList.remove('fade-out');
+                    dialog.querySelector('.bg-gray-900').classList.remove('slide-down');
+                    addDeviceToGrid(device);
+                }, 300);
+            }, 300);
+        }
+
+        function addDeviceToGrid(device) {
+            const deviceGrid = document.querySelector('.grid-cols-1.lg\\:grid-cols-3');
+            const newDevice = document.createElement('div');
+            newDevice.className = 'device-card device-appear';
+            
+            newDevice.innerHTML = `
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="device-icon-wrapper active device-pulse">
+                            <i class="ti ti-${device.type === 'watch' ? 'device-watch' : 
+                                          device.type === 'band' ? 'device-activity' :
+                                          device.type === 'ring' ? 'ring' : 'heart-rate'} 
+                               text-2xl text-purple-500"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold">${device.name}</h4>
+                            <p class="text-sm text-gray-400">Connected</p>
+                        </div>
+                    </div>
+                    <button class="text-gray-400 hover:text-white transition-colors">
+                        <i class="ti ti-dots-vertical"></i>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Last synced</span>
+                        <span>Just now</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Battery</span>
+                        <div class="flex items-center gap-2">
+                            <i class="ti ti-battery-${Math.ceil(device.battery/25)} 
+                               text-${device.battery > 20 ? 'green' : 'yellow'}-500"></i>
+                            <span>${device.battery}%</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Status</span>
+                        <span class="device-status status-active">Simulated</span>
+                    </div>
+                    <div class="pt-4 border-t border-gray-800">
+                        <button class="w-full py-2 text-sm text-gray-400 hover:text-white transition-colors flex items-center justify-center gap-2">
+                            <i class="ti ti-refresh"></i>
+                            <span>Simulate Sync</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Insert before the "Add Device" card
+            const addDeviceCard = deviceGrid.lastElementChild;
+            deviceGrid.insertBefore(newDevice, addDeviceCard);
+
+            showNotification('Device Connected', `${device.name} has been connected successfully!`);
+        }
+
+        function closeDeviceSearch() {
+            const dialog = document.getElementById('tempDeviceSearch');
+            dialog.style.display = 'none';
+            
+            // Reset steps
+            document.getElementById('searchingStep').classList.remove('hidden');
+            document.getElementById('deviceListStep').classList.add('hidden');
+            document.getElementById('connectionSuccessStep').classList.add('hidden');
+        }
+
+        function showNotification(title, message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-4 right-4 bg-gray-800 text-white p-4 rounded-lg shadow-lg device-appear z-50';
+            notification.innerHTML = `
+                <h4 class="font-semibold">${title}</h4>
+                <p class="text-sm text-gray-300">${message}</p>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

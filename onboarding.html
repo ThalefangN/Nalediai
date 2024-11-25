@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Started - NalediAI</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
+    <style>
+        :root {
+            --bg-primary: #13131a;
+            --bg-secondary: #1c1c24;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+        }
+
+        .light-mode {
+            --bg-primary: #f7fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .theme-card {
+            background-color: var(--bg-secondary);
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            width: 50px;
+            height: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #4a5568;
+            transition: 0.4s;
+            border-radius: 25px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 19px;
+            width: 19px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #22c55e;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(25px);
+        }
+
+        .toggle-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .sun-icon {
+            right: 7px;
+        }
+
+        .moon-icon {
+            left: 7px;
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slide-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.6s ease-out forwards;
+        }
+
+        .animate-slide-up {
+            opacity: 0;
+            animation: slide-up 0.6s ease-out forwards;
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            margin: 0 4px;
+            border-radius: 50%;
+            background-color: #4b5563;
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            background-color: #22c55e;
+            transform: scale(1.5);
+        }
+
+        .error-message {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .error-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .form-field {
+            display: none;
+        }
+
+        .form-field.active {
+            display: block;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: #9ca3af;
+        }
+
+        .iti {
+            width: 100%;
+        }
+
+        .iti__flag {
+            background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/img/flags.png");
+        }
+
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .iti__flag {
+                background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/img/flags@2x.png");
+            }
+        }
+
+        .iti__country-list {
+            background-color: #1c1c24;
+            border: 1px solid #374151;
+            color: white;
+        }
+
+        .iti__country {
+            padding: 8px 10px;
+        }
+
+        .iti__country:hover {
+            background-color: #374151;
+        }
+
+        .success-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            background: rgba(22, 163, 74, 0.95);
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .success-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .checkmark {
+            width: 60px;
+            height: 60px;
+            color: #16a34a;
+            stroke-width: 2;
+            transform-origin: center;
+        }
+
+        @keyframes checkmark {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-[#13131a]">
+    <!-- Success Popup -->
+    <div id="successPopup" class="success-popup">
+        <div class="success-icon">
+            <i class="ti ti-check checkmark" style="font-size: 60px;"></i>
+        </div>
+        <h2 class="text-white text-2xl font-bold mb-2">Account Created!</h2>
+        <p class="text-white/90 text-lg">Redirecting to login...</p>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="absolute top-4 right-4">
+        <label class="toggle-switch">
+            <input type="checkbox" id="themeToggle">
+            <span class="toggle-slider">
+                <i class="ti ti-sun toggle-icon sun-icon"></i>
+                <i class="ti ti-moon toggle-icon moon-icon"></i>
+            </span>
+        </label>
+    </div>
+
+    <div class="flex min-h-screen items-center justify-center">
+        <div class="w-full max-w-md rounded-xl bg-[#1c1c24] p-8 shadow-lg">
+            <div class="text-center mb-6 animate-fade-in">
+                <h1 class="text-3xl font-bold text-white">Welcome to NalediAI</h1>
+                <p class="text-gray-400 mt-2">Create your account to get started</p>
+            </div>
+
+            <div class="flex justify-center gap-2 mb-6">
+                <div class="step-dot active" data-step="1"></div>
+                <div class="step-dot" data-step="2"></div>
+                <div class="step-dot" data-step="3"></div>
+                <div class="step-dot" data-step="4"></div>
+            </div>
+
+            <!-- Error Message Container -->
+            <div id="errorMessage" class="error-message mb-4 text-center text-red-500 bg-red-500/10 rounded-lg py-2 px-4"></div>
+
+            <form id="onboardingForm" class="space-y-4">
+                <!-- Step 1: Username -->
+                <div class="form-field active" data-step="1">
+                    <div class="animate-slide-up" style="animation-delay: 100ms">
+                        <label for="username" class="block text-sm font-medium text-gray-300 mb-1">Username</label>
+                        <input type="text" id="username" name="username" required placeholder="Enter your username"
+                            class="w-full rounded-lg border border-gray-700 bg-white p-2.5 text-black placeholder-gray-500 focus:border-green-500 focus:ring-green-500 transition-transform duration-300 hover:scale-[1.02]">
+                    </div>
+                </div>
+
+                <!-- Step 2: Email -->
+                <div class="form-field" data-step="2">
+                    <div class="animate-slide-up" style="animation-delay: 100ms">
+                        <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email"
+                            class="w-full rounded-lg border border-gray-700 bg-white p-2.5 text-black placeholder-gray-500 focus:border-green-500 focus:ring-green-500 transition-transform duration-300 hover:scale-[1.02]">
+                    </div>
+                </div>
+
+                <!-- Step 3: Password -->
+                <div class="form-field" data-step="3">
+                    <div class="animate-slide-up" style="animation-delay: 100ms">
+                        <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                        <div class="password-container">
+                            <input type="password" id="password" name="password" required placeholder="Enter your password"
+                                class="w-full rounded-lg border border-gray-700 bg-white p-2.5 text-black placeholder-gray-500 focus:border-green-500 focus:ring-green-500 transition-transform duration-300 hover:scale-[1.02]">
+                            <span class="password-toggle" onclick="togglePassword()">
+                                <i id="passwordIcon" class="ti ti-eye text-lg"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Phone -->
+                <div class="form-field" data-step="4">
+                    <div class="animate-slide-up" style="animation-delay: 100ms">
+                        <label for="phone" class="block text-sm font-medium text-gray-300 mb-1">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required
+                            class="w-full rounded-lg border border-gray-700 bg-white p-2.5 text-black placeholder-gray-500 focus:border-green-500 focus:ring-green-500 transition-transform duration-300 hover:scale-[1.02]">
+                    </div>
+                </div>
+
+                <div class="flex justify-between mt-6">
+                    <button type="button" id="prevButton" 
+                        class="rounded-lg bg-neutral-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-neutral-600 focus:outline-none focus:ring-4 focus:ring-neutral-800 transition-all duration-300 hover:scale-105 hidden">
+                        Previous
+                    </button>
+                    <button type="button" id="nextButton"
+                        class="rounded-lg bg-green-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-800 transition-all duration-300 hover:scale-105">
+                        Next
+                    </button>
+                    <button type="submit" id="submitButton"
+                        class="rounded-lg bg-green-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-800 transition-all duration-300 hover:scale-105 hidden">
+                        Create Account
+                    </button>
+                </div>
+
+                <p class="text-sm text-gray-400 text-center animate-slide-up mt-4">
+                    Already have an account?
+                    <a href="signin.html" class="text-green-500 hover:underline">Sign in</a>
+                </p>
+                <button type="submit" class="w-full py-2 px-4 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">
+                    Create Account
+                </button>
+                <div class="mt-4 text-sm text-center text-gray-400">
+                    <p>By creating an account, you agree to our</p>
+                    <div class="flex justify-center gap-2">
+                        <a href="terms.html" class="text-green-500 hover:text-green-400">Terms of Service</a>
+                        <span>&bull;</span>
+                        <a href="privacy.html" class="text-green-500 hover:text-green-400">Privacy Policy</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script>
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            body.classList.add('light-mode');
+            themeToggle.checked = true;
+        }
+
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                body.classList.add('light-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        let currentStep = 1;
+        const totalSteps = 4;
+        const form = document.getElementById('onboardingForm');
+        const nextButton = document.getElementById('nextButton');
+        const prevButton = document.getElementById('prevButton');
+        const submitButton = document.getElementById('submitButton');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Initialize phone input
+        const phoneInput = window.intlTelInput(document.querySelector("#phone"), {
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+            separateDialCode: true,
+            initialCountry: "auto",
+            geoIpLookup: function(callback) {
+                fetch("https://ipapi.co/json")
+                    .then(res => res.json())
+                    .then(data => callback(data.country_code))
+                    .catch(() => callback("BW")); // Default to Botswana
+            },
+            customPlaceholder: function(selectedCountryPlaceholder, selectedCountryData) {
+                return "Enter phone number";
+            }
+        });
+
+        // Style the phone input after initialization
+        const phoneInputField = document.querySelector("#phone");
+        phoneInputField.style.backgroundColor = "white";
+        phoneInputField.style.color = "black";
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const passwordIcon = document.getElementById('passwordIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.classList.remove('ti-eye');
+                passwordIcon.classList.add('ti-eye-off');
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.classList.remove('ti-eye-off');
+                passwordIcon.classList.add('ti-eye');
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 3000);
+        }
+
+        function updateStep(step) {
+            // Update form fields visibility
+            document.querySelectorAll('.form-field').forEach(field => {
+                field.classList.remove('active');
+            });
+            document.querySelector(`.form-field[data-step="${step}"]`).classList.add('active');
+
+            // Update dots
+            document.querySelectorAll('.step-dot').forEach(dot => {
+                const dotStep = parseInt(dot.dataset.step);
+                dot.classList.remove('active');
+                if (dotStep <= step) {
+                    dot.classList.add('active');
+                }
+            });
+
+            // Update buttons
+            prevButton.style.display = step === 1 ? 'none' : 'block';
+            nextButton.style.display = step === totalSteps ? 'none' : 'block';
+            submitButton.style.display = step === totalSteps ? 'block' : 'none';
+
+            // Focus on the current input
+            const currentInput = document.querySelector(`.form-field[data-step="${step}"] input`);
+            if (currentInput) {
+                currentInput.focus();
+            }
+        }
+
+        nextButton.addEventListener('click', () => {
+            const currentField = document.querySelector(`.form-field[data-step="${currentStep}"]`);
+            const input = currentField.querySelector('input');
+
+            if (!input.value.trim()) {
+                showError('Please fill out this field');
+                input.focus();
+                return;
+            }
+
+            if (input.type === 'email' && !input.value.includes('@')) {
+                showError('Please enter a valid email address');
+                input.focus();
+                return;
+            }
+
+            if (input.type === 'password' && input.value.length < 6) {
+                showError('Password must be at least 6 characters');
+                input.focus();
+                return;
+            }
+
+            currentStep++;
+            updateStep(currentStep);
+        });
+
+        prevButton.addEventListener('click', () => {
+            currentStep--;
+            updateStep(currentStep);
+        });
+
+        function showSuccessAndRedirect() {
+            const popup = document.getElementById('successPopup');
+            const checkmark = popup.querySelector('.checkmark');
+            
+            popup.classList.add('show');
+            checkmark.style.animation = 'checkmark 0.5s ease-in-out forwards';
+            
+            setTimeout(() => {
+                window.location.href = 'signin.html';
+            }, 2000);
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const phone = phoneInput.getNumber();
+
+            if (!username || !email || !password || !phone) {
+                showError('Please fill out all fields');
+                return;
+            }
+
+            if (!phoneInput.isValidNumber()) {
+                showError('Please enter a valid phone number');
+                return;
+            }
+            
+            const userData = {
+                username: username,
+                email: email,
+                phone: phone,
+                preferences: 'General mental health support'
+            };
+            
+            localStorage.setItem('userData', JSON.stringify(userData));
+            
+            const progressData = {
+                chatSessions: 0,
+                exercisesDone: 0
+            };
+            localStorage.setItem('userProgress', JSON.stringify(progressData));
+            
+            // Show success animation and redirect
+            showSuccessAndRedirect();
+        });
+
+        // Form validation animations
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('invalid', (e) => {
+                e.preventDefault();
+                showError('Please fill out this field correctly');
+                input.classList.add('border-red-500');
+                setTimeout(() => input.classList.remove('border-red-500'), 500);
+            });
+            
+            input.addEventListener('input', () => {
+                input.classList.remove('border-red-500');
+            });
+        });
+    </script>
+</body>
+</html>

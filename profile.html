@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - NalediAI Mental Health</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+</head>
+<body class="bg-[#13131a]">
+    <nav class="bg-[#1c1c24] p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-white text-xl font-bold">NalediAI</a>
+            <div class="flex gap-4">
+                <a href="home.html" class="text-white hover:text-gray-300">Chat</a>
+                <a href="#exercises" class="text-white hover:text-gray-300">Exercises</a>
+                <a href="#resources" class="text-white hover:text-gray-300">Resources</a>
+                <a href="profile.html" class="text-white hover:text-gray-300">Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mx-auto mt-16 max-w-lg rounded-lg bg-[#1c1c24] p-6 shadow-lg">
+        <div class="flex flex-col items-center">
+            <p class="mb-4 flex h-20 w-20 flex-row items-center justify-center rounded-full bg-green-600">
+                <i class="ti ti-user text-4xl text-white"></i>
+            </p>
+            <h1 class="mb-2 text-3xl font-semibold text-white">Your Profile</h1>
+            <div class="mt-4 w-full space-y-6">
+                <div>
+                    <p class="mb-1 text-sm text-gray-400">Username:</p>
+                    <p id="username" class="mb-2 text-lg font-semibold text-white"></p>
+                </div>
+
+                <div>
+                    <p class="mb-1 text-sm text-gray-400">Email:</p>
+                    <p id="email" class="mb-2 text-lg font-semibold text-white"></p>
+                </div>
+
+                <div>
+                    <p class="mb-1 text-sm text-gray-400">Preferred Name:</p>
+                    <p id="preferredName" class="mb-2 text-lg font-semibold text-white"></p>
+                </div>
+
+                <div>
+                    <p class="mb-1 text-sm text-gray-400">Support Preferences:</p>
+                    <p id="preferences" class="mb-2 text-lg font-semibold text-white"></p>
+                </div>
+
+                <div class="pt-4 border-t border-gray-700">
+                    <h2 class="text-xl font-semibold text-white mb-4">Your Progress</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-neutral-900 p-4 rounded-lg">
+                            <p class="text-sm text-gray-400">Chat Sessions</p>
+                            <p id="chatSessions" class="text-2xl font-bold text-green-500">0</p>
+                        </div>
+                        <div class="bg-neutral-900 p-4 rounded-lg">
+                            <p class="text-sm text-gray-400">Exercises Done</p>
+                            <p id="exercisesDone" class="text-2xl font-bold text-green-500">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-center pt-6">
+                    <button onclick="window.location.href='home.html'" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg">
+                        Return to Chat
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load user data from localStorage
+        window.addEventListener('DOMContentLoaded', function() {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            if (userData) {
+                document.getElementById('username').textContent = userData.username || 'Not set';
+                document.getElementById('email').textContent = userData.email || 'Not set';
+                document.getElementById('preferredName').textContent = userData.preferredName || userData.username || 'Not set';
+                document.getElementById('preferences').textContent = userData.preferences || 'General mental health support';
+                
+                // Load progress data
+                const progress = JSON.parse(localStorage.getItem('userProgress')) || {
+                    chatSessions: 0,
+                    exercisesDone: 0
+                };
+                document.getElementById('chatSessions').textContent = progress.chatSessions;
+                document.getElementById('exercisesDone').textContent = progress.exercisesDone;
+            } else {
+                // Redirect to onboarding if no user data
+                window.location.href = 'onboarding.html';
+            }
+        });
+    </script>
+</body>
+</html>

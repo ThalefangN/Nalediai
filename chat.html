@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chat - NalediAI Mental Health</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="NalediAI">
+    <link rel="apple-touch-icon" href="assets/icons/icon-152x152.png">
+    <meta name="theme-color" content="#22c55e">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    <link rel="stylesheet" href="css/chat.css">
+    <style>
+        :root {
+            --bg-primary: #13131a;
+            --bg-secondary: #1c1c24;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+        }
+
+        .light-mode {
+            --bg-primary: #f7fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .theme-card {
+            background-color: var(--bg-secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Theme Toggle and Profile -->
+    <header class="fixed w-full top-0 z-50 theme-card shadow-lg header-animate">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <a href="home.html" class="text-2xl">
+                    <i class="ti ti-arrow-left"></i>
+                </a>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <img src="assets/naledi (3) 1.png" alt="NalediAI" class="w-8 h-8">
+                        <span class="font-semibold">NalediAI Assistant</span>
+                    </div>
+                    <div class="active-status text-sm text-green-500">
+                        <span class="active-dot"></span>
+                        <span>Online</span>
+                    </div>
+                </div>
+            </div>
+            
+            <label class="toggle-switch">
+                <input type="checkbox" id="theme-toggle">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+    </header>
+
+    <!-- Main Chat Container -->
+    <main class="pt-20 pb-24">
+        <div class="message-container" id="message-container">
+            <!-- Welcome message will be added by JavaScript -->
+        </div>
+
+        <!-- Input Container -->
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea 
+                    id="message-input"
+                    placeholder="Type your message..."
+                    rows="1"
+                    class="resize-none"
+                ></textarea>
+                <button id="send-button" class="flex-shrink-0">
+                    <i class="ti ti-send"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/chat.js"></script>
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+
+        // Add to Home Screen prompt for iOS
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Show install prompt when appropriate
+            // You can add a custom UI element to trigger this
+        });
+
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        // Check for saved theme preference
+        if (localStorage.getItem('theme') === 'light') {
+            body.classList.add('light-mode');
+            themeToggle.checked = true;
+        }
+
+        // Handle theme toggle
+        themeToggle.addEventListener('change', () => {
+            body.classList.toggle('light-mode');
+            localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+        });
+
+        // Initialize chat interface with welcome message
+        document.addEventListener('DOMContentLoaded', () => {
+            const chat = new ChatInterface();
+            chat.addMessageToUI(
+                "Hello! I'm NalediAI, your mental health support assistant. I'm here to listen and help you navigate your thoughts and feelings. How are you feeling today?",
+                false
+            );
+        });
+    </script>
+</body>
+</html>

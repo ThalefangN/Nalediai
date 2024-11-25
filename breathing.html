@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breathing Techniques - NalediAI Mental Health</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.30.0/tabler-icons.min.css">
+    <style>
+        :root {
+            --bg-primary: #13131a;
+            --bg-secondary: #1c1c24;
+            --text-primary: #ffffff;
+            --text-secondary: #b4b4b4;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .theme-card {
+            background-color: var(--bg-secondary);
+        }
+
+        header {
+            height: 2.5rem;
+        }
+
+        header .container {
+            height: 100%;
+        }
+
+        .technique-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            padding: 1rem;
+            margin-top: 4rem;
+        }
+
+        .technique-card {
+            background: var(--bg-secondary);
+            border-radius: 1rem;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            min-height: 400px;
+            animation: fadeIn 0.5s ease forwards;
+            transition: all 0.3s ease;
+        }
+
+        .technique-icon {
+            font-size: 3rem;
+            color: #22c55e;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .step-number {
+            width: 2rem;
+            height: 2rem;
+            background: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .step:hover {
+            transform: translateX(10px);
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        .technique-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Button Animations */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .exercise-button {
+            animation: pulse 2s infinite;
+            transition: all 0.3s ease;
+        }
+
+        .exercise-button:hover {
+            animation: bounce 0.5s ease;
+            transform: translateY(-2px);
+            background: #22c55e !important;
+        }
+
+        .exercise-button:active {
+            transform: scale(0.95);
+        }
+
+        .button-click-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button-click-effect::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .button-click-effect:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(100, 100);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .technique-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Breathing Exercise Animation Styles */
+        .breathing-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .breathing-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .breathing-container {
+            position: relative;
+            width: 90%;
+            max-width: 600px;
+            background: var(--bg-secondary);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            text-align: center;
+            transform: scale(0.8);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .breathing-container.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .breathing-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 4px solid #22c55e;
+            margin: 2rem auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-origin: center;
+        }
+
+        .breathing-circle::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, 0.1);
+            transform: scale(0);
+        }
+
+        .breathing-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .breathing-count {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #22c55e;
+            margin: 1rem 0;
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        .breathing-step {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.5s ease;
+        }
+
+        .breathing-step.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Animations */
+        @keyframes inhale {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.2);
+            }
+        }
+
+        @keyframes exhale {
+            0% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(34, 197, 94, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+            }
+        }
+
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .close-button:hover {
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="fixed w-full top-0 z-50 theme-card shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-full">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold">NalediAI</h1>
+                </div>
+                <a href="exercises.html" class="text-sm text-gray-400 hover:text-white transition-colors">
+                    <i class="ti ti-arrow-left"></i> Back to Exercises
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4">
+        <div class="technique-container">
+            <!-- Box Breathing Technique -->
+            <div class="technique-card">
+                <div class="flex items-center gap-4 mb-2">
+                    <i class="ti ti-box technique-icon"></i>
+                    <div>
+                        <h2 class="text-2xl font-bold">Box Breathing</h2>
+                        <p class="text-gray-400">Perfect for reducing stress and anxiety</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <p>Inhale slowly for 4 counts</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <p>Hold your breath for 4 counts</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <p>Exhale slowly for 4 counts</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <p>Hold your breath for 4 counts</p>
+                    </div>
+                </div>
+
+                <button onclick="startBreathingExercise(this)" class="exercise-button button-click-effect mt-auto w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-all">
+                    Start Practice
+                </button>
+            </div>
+
+            <!-- 4-7-8 Breathing Technique -->
+            <div class="technique-card">
+                <div class="flex items-center gap-4 mb-2">
+                    <i class="ti ti-wind technique-icon"></i>
+                    <div>
+                        <h2 class="text-2xl font-bold">4-7-8 Breathing</h2>
+                        <p class="text-gray-400">Helps with sleep and relaxation</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <p>Inhale quietly through your nose for 4 counts</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <p>Hold your breath for 7 counts</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <p>Exhale completely through your mouth for 8 counts</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <p>Repeat the cycle up to 4 times</p>
+                    </div>
+                </div>
+
+                <button onclick="startBreathingExercise(this)" class="exercise-button button-click-effect mt-auto w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-all">
+                    Start Practice
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Breathing Exercise Popup -->
+    <div id="breathingExercise" class="breathing-overlay">
+        <div class="breathing-container">
+            <button class="close-button" onclick="closeBreathingExercise()">
+                <i class="ti ti-x"></i>
+            </button>
+            <div class="breathing-circle">
+                <div class="breathing-count"></div>
+            </div>
+            <div class="breathing-text"></div>
+            <div class="breathing-steps">
+                <div class="breathing-step">Inhale slowly for 4 counts</div>
+                <div class="breathing-step">Hold your breath for 4 counts</div>
+                <div class="breathing-step">Exhale slowly for 4 counts</div>
+                <div class="breathing-step">Hold for 4 counts</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add ripple effect to buttons
+        function createRipple(event) {
+            const button = event.currentTarget;
+            const ripple = document.createElement('span');
+            const diameter = Math.max(button.clientWidth, button.clientHeight);
+            const radius = diameter / 2;
+
+            ripple.style.width = ripple.style.height = `${diameter}px`;
+            ripple.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+            ripple.style.top = `${event.clientY - button.offsetTop - radius}px`;
+            ripple.className = 'ripple';
+
+            button.appendChild(ripple);
+
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+
+        // Add click effect to all exercise buttons
+        document.querySelectorAll('.exercise-button').forEach(button => {
+            button.addEventListener('click', createRipple);
+        });
+
+        function startBreathingExercise(button) {
+            const overlay = document.getElementById('breathingExercise');
+            const container = overlay.querySelector('.breathing-container');
+            const circle = overlay.querySelector('.breathing-circle');
+            const countDisplay = overlay.querySelector('.breathing-count');
+            const textDisplay = overlay.querySelector('.breathing-text');
+            const steps = overlay.querySelectorAll('.breathing-step');
+            
+            overlay.classList.add('active');
+            setTimeout(() => container.classList.add('active'), 100);
+
+            let currentStep = 0;
+            const stepDuration = 4000; // 4 seconds per step
+
+            function updateStep(step) {
+                steps.forEach(s => s.classList.remove('active'));
+                steps[step].classList.add('active');
+            }
+
+            function animateCount(duration, text) {
+                textDisplay.style.animation = 'fadeInUp 0.5s forwards';
+                textDisplay.textContent = text;
+                
+                let count = duration / 1000;
+                countDisplay.textContent = count;
+                countDisplay.style.animation = 'fadeInDown 0.5s forwards';
+
+                const interval = setInterval(() => {
+                    count--;
+                    countDisplay.textContent = count;
+                    if (count === 0) {
+                        clearInterval(interval);
+                        countDisplay.style.animation = '';
+                        textDisplay.style.animation = '';
+                    }
+                }, 1000);
+            }
+
+            function runStep() {
+                if (currentStep >= steps.length) {
+                    currentStep = 0;
+                }
+
+                updateStep(currentStep);
+
+                switch(currentStep) {
+                    case 0: // Inhale
+                        circle.style.animation = 'inhale 4s forwards';
+                        animateCount(4000, 'Inhale');
+                        break;
+                    case 1: // Hold
+                        circle.style.animation = 'pulse 4s infinite';
+                        animateCount(4000, 'Hold');
+                        break;
+                    case 2: // Exhale
+                        circle.style.animation = 'exhale 4s forwards';
+                        animateCount(4000, 'Exhale');
+                        break;
+                    case 3: // Hold
+                        circle.style.animation = 'pulse 4s infinite';
+                        animateCount(4000, 'Hold');
+                        break;
+                }
+
+                currentStep++;
+                if (currentStep < steps.length) {
+                    setTimeout(runStep, stepDuration);
+                } else {
+                    setTimeout(() => {
+                        currentStep = 0;
+                        runStep();
+                    }, stepDuration);
+                }
+            }
+
+            runStep();
+        }
+
+        function closeBreathingExercise() {
+            const overlay = document.getElementById('breathingExercise');
+            const container = overlay.querySelector('.breathing-container');
+            container.classList.remove('active');
+            setTimeout(() => overlay.classList.remove('active'), 500);
+        }
+    </script>
+</body>
+</html>

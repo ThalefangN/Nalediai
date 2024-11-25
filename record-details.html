@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Details - Beat Cancer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Add Tabler Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+</head>
+<body class="bg-[#13131a] text-white">
+    <nav class="bg-[#1c1c24] p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-white text-xl font-bold">Beat Cancer</a>
+            <div class="flex gap-4">
+                <a href="index.html" class="text-white hover:text-gray-300">Board</a>
+                <a href="records.html" class="text-white hover:text-gray-300">Records</a>
+                <a href="profile.html" class="text-white hover:text-gray-300">Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        <div class="mb-6 flex items-center gap-4">
+            <a href="records.html" class="text-gray-400 hover:text-white">
+                <i class="ti ti-arrow-left text-xl"></i>
+            </a>
+            <h1 id="recordTitle" class="text-2xl font-bold"></h1>
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-2">
+            <!-- Analysis Section -->
+            <div class="rounded-lg bg-[#1c1c24] p-6">
+                <h2 class="mb-4 text-xl font-semibold">Analysis</h2>
+                <div id="analysisContent" class="min-h-[200px] rounded-lg bg-[#2c2c34] p-4">
+                    <p class="text-gray-400">No analysis available yet.</p>
+                </div>
+                <button
+                    id="updateAnalysisBtn"
+                    class="mt-4 rounded bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700"
+                >
+                    Update Analysis
+                </button>
+            </div>
+
+            <!-- Kanban Board Section -->
+            <div class="rounded-lg bg-[#1c1c24] p-6">
+                <h2 class="mb-4 text-xl font-semibold">Treatment Plan</h2>
+                <div id="kanbanBoard" class="grid gap-4">
+                    <!-- Kanban columns will be added here -->
+                </div>
+                <button
+                    id="openKanbanBtn"
+                    class="mt-4 rounded bg-green-600 px-4 py-2 font-semibold text-white hover:bg-green-700"
+                    onclick="window.location.href='index.html'"
+                >
+                    Open Kanban Board
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analysis Update Modal -->
+    <div id="analysisModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+        <div class="bg-[#1c1c24] p-6 rounded-lg w-full max-w-2xl">
+            <h2 class="text-xl font-bold mb-4">Update Analysis</h2>
+            <form id="analysisForm">
+                <textarea
+                    id="analysisText"
+                    rows="10"
+                    class="w-full rounded-lg bg-neutral-900 px-4 py-3 text-neutral-400 focus:border-blue-600 focus:outline-none"
+                    placeholder="Enter your analysis here..."
+                ></textarea>
+                <div class="flex justify-end gap-4 mt-4">
+                    <button
+                        type="button"
+                        class="px-4 py-2 text-gray-400 hover:text-gray-300"
+                        onclick="closeAnalysisModal()"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const recordTitle = document.getElementById('recordTitle');
+        const analysisContent = document.getElementById('analysisContent');
+        const updateAnalysisBtn = document.getElementById('updateAnalysisBtn');
+        const analysisModal = document.getElementById('analysisModal');
+        const analysisForm = document.getElementById('analysisForm');
+        const analysisText = document.getElementById('analysisText');
+
+        // Get record name from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const recordName = urlParams.get('name');
+
+        // Event Listeners
+        updateAnalysisBtn.addEventListener('click', openAnalysisModal);
+        analysisForm.addEventListener('submit', handleAnalysisUpdate);
+
+        // Functions
+        function openAnalysisModal() {
+            analysisModal.classList.remove('hidden');
+            const records = JSON.parse(localStorage.getItem('userRecords') || '[]');
+            const record = records.find(r => r.recordName === recordName);
+            if (record && record.analysisResult) {
+                analysisText.value = record.analysisResult;
+            }
+        }
+
+        function closeAnalysisModal() {
+            analysisModal.classList.add('hidden');
+            analysisForm.reset();
+        }
+
+        function handleAnalysisUpdate(e) {
+            e.preventDefault();
+            const analysis = analysisText.value;
+            
+            // Update record in localStorage
+            const records = JSON.parse(localStorage.getItem('userRecords') || '[]');
+            const recordIndex = records.findIndex(r => r.recordName === recordName);
+            if (recordIndex !== -1) {
+                records[recordIndex].analysisResult = analysis;
+                localStorage.setItem('userRecords', JSON.stringify(records));
+                
+                // Update UI
+                analysisContent.innerHTML = `<p class="whitespace-pre-wrap">${analysis}</p>`;
+                closeAnalysisModal();
+            }
+        }
+
+        // Initialize page
+        function initializePage() {
+            if (!recordName) {
+                window.location.href = 'records.html';
+                return;
+            }
+
+            recordTitle.textContent = recordName;
+            
+            const records = JSON.parse(localStorage.getItem('userRecords') || '[]');
+            const record = records.find(r => r.recordName === recordName);
+            
+            if (record && record.analysisResult) {
+                analysisContent.innerHTML = `<p class="whitespace-pre-wrap">${record.analysisResult}</p>`;
+            }
+        }
+
+        // Load page data when page loads
+        window.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community - NalediAI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.22.0/tabler-icons.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-primary: #13131a;
+            --bg-secondary: #1c1c24;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .chat-container {
+            height: calc(100vh - 10rem);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(34, 197, 94, 0.3) transparent;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background-color: rgba(34, 197, 94, 0.3);
+            border-radius: 3px;
+        }
+
+        .member-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #22c55e;
+            transition: all 0.3s ease;
+        }
+
+        .member-row:hover .member-icon {
+            transform: scale(1.1);
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        .message {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: messageAppear 0.5s ease forwards;
+        }
+
+        @keyframes messageAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-input {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .message-input:focus {
+            border-color: #22c55e;
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+        }
+
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: flicker 2s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .typing-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .typing-dot {
+            width: 4px;
+            height: 4px;
+            background: #22c55e;
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+
+        .typing-dot:nth-child(1) { animation: typingDot 1.4s infinite; }
+        .typing-dot:nth-child(2) { animation: typingDot 1.4s infinite 0.2s; }
+        .typing-dot:nth-child(3) { animation: typingDot 1.4s infinite 0.4s; }
+
+        @keyframes typingDot {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+
+        .community-card {
+            background: var(--bg-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .community-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .send-button {
+            transition: all 0.3s ease;
+        }
+
+        .send-button:hover {
+            transform: scale(1.1);
+        }
+
+        .emoji-picker {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background: var(--bg-secondary);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.5rem;
+            display: none;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.5rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .emoji-picker.active {
+            display: grid;
+        }
+
+        .emoji {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            padding: 0.25rem;
+        }
+
+        .emoji:hover {
+            transform: scale(1.2);
+        }
+
+        .back-button {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 60;
+            background: rgba(34, 197, 94, 0.1);
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            color: #22c55e;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-button:hover {
+            background: rgba(34, 197, 94, 0.2);
+            transform: translateX(-4px);
+        }
+
+        .back-button i {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .back-button:hover i {
+            transform: scale(1.1);
+        }
+
+        .welcome-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .welcome-popup.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .welcome-icon {
+            font-size: 3rem;
+            color: #22c55e;
+            margin-bottom: 1rem;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Welcome Popup -->
+    <div id="welcomePopup" class="welcome-popup">
+        <i class="ti ti-heart welcome-icon"></i>
+        <h2 class="text-xl font-bold mb-2">Welcome to Our Community!</h2>
+        <p class="text-gray-400">Please be respectful and supportive to all members. Together, we grow stronger! 💚</p>
+    </div>
+
+    <!-- Back Button -->
+    <button onclick="window.history.back()" class="back-button">
+        <i class="ti ti-arrow-left"></i>
+    </button>
+
+    <!-- Main Content -->
+    <main class="min-h-screen p-6">
+        <div class="max-w-7xl mx-auto pt-12">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Community Sidebar -->
+                <div class="lg:col-span-1 space-y-4">
+                    <!-- Online Members -->
+                    <div class="community-card rounded-xl p-4">
+                        <h2 class="text-lg font-semibold mb-4">Online Members</h2>
+                        <div class="space-y-3">
+                            <div class="member-row flex items-center gap-3">
+                                <div class="relative">
+                                    <div class="member-icon">
+                                        <i class="ti ti-user"></i>
+                                    </div>
+                                    <div class="online-dot absolute -bottom-0.5 -right-0.5"></div>
+                                </div>
+                                <span>Sarah M.</span>
+                            </div>
+                            <div class="member-row flex items-center gap-3">
+                                <div class="relative">
+                                    <div class="member-icon">
+                                        <i class="ti ti-user"></i>
+                                    </div>
+                                    <div class="online-dot absolute -bottom-0.5 -right-0.5"></div>
+                                </div>
+                                <span>John D.</span>
+                            </div>
+                            <div class="member-row flex items-center gap-3">
+                                <div class="relative">
+                                    <div class="member-icon">
+                                        <i class="ti ti-user"></i>
+                                    </div>
+                                    <div class="online-dot absolute -bottom-0.5 -right-0.5"></div>
+                                </div>
+                                <span>Emma W.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Community Stats -->
+                    <div class="community-card rounded-xl p-4">
+                        <h2 class="text-lg font-semibold mb-4">Community Stats</h2>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-400">Members</span>
+                                <span class="font-medium">1,234</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-400">Online</span>
+                                <span class="font-medium text-green-500">42</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-400">Messages Today</span>
+                                <span class="font-medium">856</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Area -->
+                <div class="lg:col-span-3 community-card rounded-xl p-4">
+                    <div class="flex flex-col h-full">
+                        <!-- Chat Messages -->
+                        <div class="chat-container mb-4 space-y-4">
+                            <!-- Messages will be added here dynamically -->
+                        </div>
+
+                        <!-- Message Input -->
+                        <div class="relative mt-auto">
+                            <div class="emoji-picker">
+                                <span class="emoji">😊</span>
+                                <span class="emoji">❤️</span>
+                                <span class="emoji">👍</span>
+                                <span class="emoji">🎉</span>
+                                <span class="emoji">🙏</span>
+                                <span class="emoji">💪</span>
+                                <span class="emoji">✨</span>
+                                <span class="emoji">🌟</span>
+                                <span class="emoji">🤗</span>
+                                <span class="emoji">💭</span>
+                                <span class="emoji">💡</span>
+                                <span class="emoji">🎯</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="text" 
+                                       class="message-input w-full rounded-lg px-4 py-2 text-white" 
+                                       placeholder="Type your message...">
+                                <button class="emoji-button p-2 text-gray-400 hover:text-white transition-colors">
+                                    <i class="ti ti-mood-smile"></i>
+                                </button>
+                                <button class="send-button bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 transition-colors">
+                                    <i class="ti ti-send"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sample messages for demonstration
+        const sampleMessages = [
+            { user: 'Sarah M.', message: 'Just completed my morning meditation! 🧘‍♀️', time: '9:30 AM' },
+            { user: 'John D.', message: 'Great job! How do you feel?', time: '9:32 AM' },
+            { user: 'Emma W.', message: 'I find morning meditation really helps set the tone for the day ✨', time: '9:35 AM' }
+        ];
+
+        function createMessage(message) {
+            const div = document.createElement('div');
+            div.className = 'message bg-[#1c1c24]/50 rounded-lg p-4';
+            div.innerHTML = `
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="member-icon w-8 h-8">
+                        <i class="ti ti-user"></i>
+                    </div>
+                    <div>
+                        <span class="font-semibold">${message.user}</span>
+                        <span class="text-xs text-gray-400 ml-2">${message.time}</span>
+                    </div>
+                </div>
+                <p class="text-gray-300 ml-11">${message.message}</p>
+            `;
+            return div;
+        }
+
+        function loadMessages() {
+            const container = document.querySelector('.chat-container');
+            sampleMessages.forEach((msg, index) => {
+                setTimeout(() => {
+                    const messageEl = createMessage(msg);
+                    container.appendChild(messageEl);
+                    container.scrollTop = container.scrollHeight;
+                }, index * 500);
+            });
+        }
+
+        // Handle emoji picker
+        const emojiButton = document.querySelector('.emoji-button');
+        const emojiPicker = document.querySelector('.emoji-picker');
+        const messageInput = document.querySelector('.message-input');
+
+        emojiButton.addEventListener('click', () => {
+            emojiPicker.classList.toggle('active');
+        });
+
+        document.querySelectorAll('.emoji').forEach(emoji => {
+            emoji.addEventListener('click', () => {
+                messageInput.value += emoji.textContent;
+                emojiPicker.classList.remove('active');
+                messageInput.focus();
+            });
+        });
+
+        // Handle sending messages
+        const sendButton = document.querySelector('.send-button');
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value.trim();
+            if (message) {
+                const newMessage = {
+                    user: 'You',
+                    message: message,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                };
+                const messageEl = createMessage(newMessage);
+                document.querySelector('.chat-container').appendChild(messageEl);
+                messageInput.value = '';
+                messageInput.focus();
+            }
+        });
+
+        // Handle enter key
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendButton.click();
+            }
+        });
+
+        // Show welcome popup on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const welcomePopup = document.getElementById('welcomePopup');
+            setTimeout(() => {
+                welcomePopup.classList.add('active');
+            }, 500);
+
+            // Hide popup after 5 seconds
+            setTimeout(() => {
+                welcomePopup.classList.remove('active');
+            }, 5000);
+        });
+
+        // Load initial messages
+        document.addEventListener('DOMContentLoaded', loadMessages);
+    </script>
+</body>
+</html>
