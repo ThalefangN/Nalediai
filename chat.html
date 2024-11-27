@@ -80,11 +80,8 @@
                     id="message-input"
                     placeholder="Type your message..."
                     rows="1"
-                    class="resize-none"
+                    class="resize-none w-full"
                 ></textarea>
-                <button id="send-button" class="flex-shrink-0">
-                    <i class="ti ti-send"></i>
-                </button>
             </div>
         </div>
     </main>
@@ -109,8 +106,6 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            // Show install prompt when appropriate
-            // You can add a custom UI element to trigger this
         });
 
         // Theme toggle functionality
@@ -129,13 +124,9 @@
             localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
         });
 
-        // Initialize chat interface with welcome message
+        // Initialize chat interface
         document.addEventListener('DOMContentLoaded', () => {
-            const chat = new ChatInterface();
-            chat.addMessageToUI(
-                "Hello! I'm NalediAI, your mental health support assistant. I'm here to listen and help you navigate your thoughts and feelings. How are you feeling today?",
-                false
-            );
+            window.chatInterface = new ChatInterface();
         });
     </script>
 </body>
