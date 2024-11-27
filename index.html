@@ -4,49 +4,252 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NalediAI - Mental Health Support</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            background: linear-gradient(135deg, #13131a 0%, #1c1c24 100%);
+        }
+        .swiper {
+            width: 100%;
+            height: 100vh;
+        }
+        .slide-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+        .emoji {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #13131a;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #FFF;
+            border-bottom-color: #22c55e;
+            border-radius: 50%;
+            animation: rotation 1s linear infinite;
+        }
+        .swipe-indicator {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 100;
+            animation: fadeInUp 1s ease-out;
+        }
+        .swipe-icon {
+            width: 40px;
+            height: 40px;
+            animation: swipeLeft 2s infinite;
+        }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 0.5rem;
+            transform: translateY(50px);
+            opacity: 0;
+            animation: slideUp 0.8s forwards;
+        }
+        .greeting {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #22c55e, #4ade80);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInOut 1s ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes swipeLeft {
+            0%, 100% { transform: translateX(0); opacity: 0.5; }
+            50% { transform: translateX(-10px); opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { transform: translate(-50%, 20px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+        @keyframes slideUp {
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .highlight {
+            color: #22c55e;
+            animation: glow 2s infinite;
+        }
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 5px rgba(34, 197, 94, 0.5); }
+            50% { text-shadow: 0 0 20px rgba(34, 197, 94, 0.8); }
+        }
+        .start-btn {
+            background: linear-gradient(45deg, #22c55e, #4ade80);
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            font-weight: bold;
+            transform: scale(1);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+    </style>
 </head>
-<body class="bg-[#13131a] text-white">
-    <div class="container mx-auto p-4">
-        <header class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold">NalediAI </h1>
-            <div class="flex gap-4">
-                <a href="get-started.html" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">
-                    Get Started
-                </a>
-            </div>
-        </header>
-
-        <main class="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
-            <div class="max-w-2xl w-full bg-[#1c1c24] p-8 rounded-lg shadow-lg text-center">
-                <h2 class="text-2xl font-bold mb-4">24/7 Mental Health Support</h2>
-                <p class="text-gray-300 mb-6">Welcome to your compassionate AI companion. Get immediate support, guided exercises, and access to mental health resources.</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <div class="bg-neutral-900 p-4 rounded-lg">
-                        <h3 class="font-semibold mb-2">Emotional Support</h3>
-                        <p class="text-sm text-gray-400">Available 24/7 for compassionate, non-judgmental conversations</p>
-                    </div>
-                    <div class="bg-neutral-900 p-4 rounded-lg">
-                        <h3 class="font-semibold mb-2">Guided Exercises</h3>
-                        <p class="text-sm text-gray-400">Access evidence-based tools for anxiety, stress, and mood management</p>
-                    </div>
-                    <div class="bg-neutral-900 p-4 rounded-lg">
-                        <h3 class="font-semibold mb-2">Crisis Resources</h3>
-                        <p class="text-sm text-gray-400">Connect with professional support and crisis helplines</p>
-                    </div>
-                </div>
-
-                <div class="flex justify-center gap-4">
-                    <a href="onboarding.html" class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-semibold">Start Chat</a>
-                    <a href="#" onclick="alert('Premium features coming soon!')" class="bg-neutral-900 hover:bg-neutral-800 px-6 py-3 rounded-lg font-semibold">Go Premium</a>
-                </div>
-            </div>
-        </main>
+<body class="text-white">
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script src="js/main.js"></script>
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            <!-- Slide 1 -->
+            <div class="swiper-slide">
+                <div class="slide-content">
+                    <div class="emoji">🧠</div>
+                    <div id="greetingText" class="greeting">Dumela</div>
+                    <h2 class="text-3xl font-bold mb-4 animate__animated animate__fadeIn">Welcome to <span class="highlight">NalediAI</span></h2>
+                    <p class="text-lg text-gray-300 mb-6">Your Personal Mental Health AI Companion</p>
+                    <div class="feature-card" style="animation-delay: 0.2s">
+                        <p class="text-sm">Powered by advanced AI technology to provide 24/7 emotional support</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="swiper-slide">
+                <div class="slide-content">
+                    <div class="emoji">💭</div>
+                    <h2 class="text-3xl font-bold mb-4">Your Safe Space</h2>
+                    <p class="text-lg text-gray-300 mb-6">A judgment-free zone for your mental well-being</p>
+                    <div class="feature-card" style="animation-delay: 0.2s">
+                        <h3 class="font-semibold mb-2">What NalediAI Offers:</h3>
+                        <ul class="text-sm space-y-2">
+                            <li>🎯 Personalized Support</li>
+                            <li>🌟 Guided Exercises</li>
+                            <li>💪 Coping Strategies</li>
+                            <li>🤝 Community Connection</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="swiper-slide">
+                <div class="slide-content">
+                    <div class="emoji">✨</div>
+                    <h2 class="text-3xl font-bold mb-4">Ready to Begin?</h2>
+                    <p class="text-lg text-gray-300 mb-6">Start your journey to better mental health</p>
+                    <div class="feature-card" style="animation-delay: 0.2s">
+                        <p class="text-sm mb-4">Join thousands of users who've found support with NalediAI</p>
+                        <button onclick="startApp()" class="start-btn">
+                            Get Started
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="swipe-indicator">
+        <svg class="swipe-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 4L3 12L9 20" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p class="text-sm text-gray-400">Swipe left to explore</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script>
+        const greetings = [
+            "Dumela", // Setswana
+            "Mholo", // Xitsonga
+            "Sawubona", // Zulu
+            "Avuxeni", // Tsonga
+            "Ndaa", // Venda
+            "Molo", // Xhosa
+            "Thobela", // Northern Sotho
+            "Dumelang", // Setswana (plural)
+            "Sanibonani", // Zulu (plural)
+            "Hello" // English
+        ];
+
+        let currentGreeting = 0;
+        
+        function updateGreeting() {
+            const greetingElement = document.getElementById('greetingText');
+            greetingElement.style.animation = 'none';
+            greetingElement.offsetHeight;
+            greetingElement.style.animation = 'fadeInOut 1s ease-in-out';
+            greetingElement.textContent = greetings[currentGreeting];
+            currentGreeting = (currentGreeting + 1) % greetings.length;
+        }
+
+        setInterval(updateGreeting, 3000);
+
+        const swiper = new Swiper('.swiper', {
+            direction: 'horizontal',
+            loop: false,
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true
+            },
+            speed: 1000,
+        });
+
+        function startApp() {
+            document.getElementById('loadingScreen').style.display = 'flex';
+            setTimeout(() => {
+                window.location.href = 'onboarding.html';
+            }, 2000);
+        }
+
+        // Hide swipe indicator after first swipe
+        swiper.on('slideChange', () => {
+            const indicator = document.querySelector('.swipe-indicator');
+            indicator.style.opacity = '0';
+            indicator.style.transition = 'opacity 0.5s ease';
+        });
+    </script>
 </body>
 </html>
