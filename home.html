@@ -774,86 +774,6 @@
             animation: none;
             box-shadow: 0 0 20px rgba(34, 197, 94, 0.8);
         }
-
-        /* Bottom Navigation Bar */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(28, 28, 36, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem 1.5rem;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--text-secondary);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 0.5rem;
-            border-radius: 1rem;
-            text-decoration: none;
-            position: relative;
-            min-width: 64px;
-        }
-
-        .nav-item.active {
-            color: #22c55e;
-        }
-
-        .nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: -0.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 4px;
-            background: #22c55e;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #22c55e;
-        }
-
-        .nav-item:hover {
-            color: #22c55e;
-            transform: translateY(-4px);
-        }
-
-        .nav-icon {
-            font-size: 1.75rem;
-            margin-bottom: 0.25rem;
-            background: linear-gradient(45deg, currentColor, currentColor);
-            -webkit-background-clip: text;
-            transition: all 0.3s ease;
-        }
-
-        .nav-item:hover .nav-icon {
-            transform: scale(1.1);
-        }
-
-        .nav-text {
-            font-size: 0.75rem;
-            font-weight: 500;
-            opacity: 0.8;
-            transition: opacity 0.3s ease;
-        }
-
-        .nav-item:hover .nav-text {
-            opacity: 1;
-        }
-
-        /* Adjust main content for bottom nav */
-        main {
-            padding-bottom: 5.5rem !important;
-        }
     </style>
 </head>
 <body>
@@ -1206,26 +1126,6 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="bottom-nav">
-        <a href="home.html" class="nav-item active">
-            <i class="ti ti-smart-home nav-icon"></i>
-            <span class="nav-text">Home</span>
-        </a>
-        <a href="chat.html" class="nav-item">
-            <i class="ti ti-message-circle-2 nav-icon"></i>
-            <span class="nav-text">Chat</span>
-        </a>
-        <a href="exercises.html" class="nav-item">
-            <i class="ti ti-activity nav-icon"></i>
-            <span class="nav-text">Exercise</span>
-        </a>
-        <a href="profile.html" class="nav-item">
-            <i class="ti ti-user-circle nav-icon"></i>
-            <span class="nav-text">Profile</span>
-        </a>
-    </nav>
-
     <script>
         // Theme Toggle Functionality
         const themeToggle = document.getElementById('themeToggle');
@@ -1256,7 +1156,7 @@
             sessionStorage.removeItem('sessionActive');
             
             // Redirect to signin page
-            window.location.href = 'signin.html';
+            window.location.href = 'signin.php';
         });
 
         // Check if user is logged in
@@ -1457,19 +1357,20 @@
 
         // Run when page loads
         displayUsername();
+        
     </script>
-            <script type="text/javascript">
-  (function(d, t) {
-      var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
-      v.onload = function() {
-        window.voiceflow.chat.load({
-          verify: { projectID: '674697e9e6d72bea8b563c3a' },
-          url: 'https://general-runtime.voiceflow.com',
-          versionID: 'production'
-        });
-      }
-      v.src = "https://cdn.voiceflow.com/widget/bundle.mjs"; v.type = "text/javascript"; s.parentNode.insertBefore(v, s);
-  })(document, 'script');
-</script>
+    <script type="text/javascript">
+        (function(d, t) {
+            var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+            v.onload = function() {
+              window.voiceflow.chat.load({
+                verify: { projectID: '674697e9e6d72bea8b563c3a' },
+                url: 'https://general-runtime.voiceflow.com',
+                versionID: 'production'
+              });
+            }
+            v.src = "https://cdn.voiceflow.com/widget/bundle.mjs"; v.type = "text/javascript"; s.parentNode.insertBefore(v, s);
+        })(document, 'script');
+      </script>
 </body>
 </html>
